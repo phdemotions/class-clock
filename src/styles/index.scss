@@ -10,18 +10,19 @@
 @use "@carbon/react/scss/theme";
 @use "@carbon/react/scss/spacing" as *;
 @use "@carbon/react/scss/breakpoint" as *;
+@use "./stage" as *;
 @use "@carbon/react/scss/components/button";
 @use "@carbon/react/scss/components/content-switcher";
 @use "@carbon/react/scss/components/form";
 @use "@carbon/react/scss/components/modal";
-@use "@carbon/react/scss/components/progress-bar";
 @use "@carbon/react/scss/components/radio-button";
 @use "@carbon/react/scss/components/select";
 @use "@carbon/react/scss/components/stack";
 @use "@carbon/react/scss/components/tabs";
 @use "@carbon/react/scss/components/tag";
 @use "@carbon/react/scss/components/text-input";
-@use "@carbon/react/scss/components/toggle";
+@use "@carbon/react/scss/components/time-picker";
+@use "@carbon/react/scss/components/notification";
 @use "@carbon/react/scss/components/tooltip";
 @use "@carbon/react/scss/components/popover";
 @use "@carbon/react/scss/components/ui-shell";
@@ -48,6 +49,13 @@
 }
 
 html, body, #root { block-size: 100%; }
+:root {
+  // Panel surface, shared by the instructions, clock and booklet tiles.
+  --erc-tile-bg: #{theme.$layer-01};
+  --erc-tile-border: #{theme.$border-subtle-01};
+  --erc-pad-x: clamp(1rem, 2vw, 2.5rem);
+  --erc-pad-y: clamp(1rem, 2.6vh, 2rem);
+}
 body {
   background: theme.$background;
   color: theme.$text-primary;
@@ -56,34 +64,35 @@ body {
 
 .erc-app { min-block-size: 100%; font-family: var(--erc-font-body); }
 
+// One frame for the whole screen: the header text, panels and side margins share
+// the grid's 2rem outer edge, and the space below the header matches the gutters.
 .erc-header {
-  transition: opacity 600ms;
-  .erc-app.is-idle & { opacity: 0.25; }
+  background: theme.$layer-01;
+  // Header text starts on the same edge as the panels below.
+  &.cds--header .cds--header__name { padding-inline: calc(var(--cds-grid-margin, 1rem) + var(--cds-grid-gutter, 2rem) / 2) 0; }
 }
-.erc-header__example { align-self: center; margin-inline-start: $spacing-03; }
+// Only the buttons fade when the mouse is still; the example warning stays visible.
+.erc-header__actions { transition: opacity 600ms; .erc-app.is-idle & { opacity: 0.2; } }
+.erc-header__example { align-self: center; margin-inline-start: $spacing-05; flex: none; }
 
-// Below the 3rem Carbon header. On large screens everything fits one screen with no scrolling.
 .erc-main {
-  padding-block: calc(3rem + #{$spacing-05}) $spacing-05;
-  padding-inline: max(0px, env(safe-area-inset-left, 0px)) max(0px, env(safe-area-inset-right, 0px));
-  @include breakpoint(lg) { block-size: 100dvh; box-sizing: border-box; }
+  padding-block: calc(3rem + #{$spacing-07}) $spacing-07;
+  padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
 }
 
-.erc-grid {
-  row-gap: $spacing-07;
-  @include breakpoint(lg) { block-size: 100%; }
-}
-
+.erc-grid { row-gap: $spacing-07; }
 .erc-col { min-inline-size: 0; }
-@include breakpoint(lg) {
+.erc-col--side { display: flex; flex-direction: column; gap: $spacing-07; order: -1; }
+
+@include stage {
+  .erc-main { block-size: 100dvh; box-sizing: border-box; }
+  .erc-grid { block-size: 100%; }
   .erc-col { block-size: 100%; min-block-size: 0; }
-  .erc-col--side {
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
-    gap: $spacing-06;
+  .erc-col--side { display: grid; grid-template-rows: auto minmax(0, 1fr); order: 0; }
+
+  // Medium screens (8 columns) in landscape: 5 + 3 split. Large screens use the Column props (10 + 6).
+  @include breakpoint-down(lg) {
+    .erc-col--instructions { grid-column: span 5; }
+    .erc-col--side { grid-column: span 3; }
   }
-}
-@include breakpoint-down(lg) {
-  .erc-col--side { display: flex; flex-direction: column; gap: $spacing-07; }
-  .erc-col--side { order: -1; }
 }

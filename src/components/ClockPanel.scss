@@ -1,87 +1,147 @@
 @use "@carbon/react/scss/theme" as *;
 @use "@carbon/react/scss/spacing" as *;
 @use "@carbon/react/scss/type" as *;
+@use "../styles/panel";
 
 .erc-clock {
-  --erc-state: #{$text-primary};
+  --erc-state: #{$support-success};
   container-type: inline-size;
-  display: flex;
-  flex-direction: column;
-  gap: clamp($spacing-03, 2vh, $spacing-07);
-  min-inline-size: 0;
 
   &.is-before { --erc-state: #{$text-secondary}; }
-  &.is-running { --erc-state: #{$support-success}; }
   &.is-warn30 { --erc-state: #{$support-caution-minor}; }
   &.is-warn10 { --erc-state: #{$support-caution-major}; }
   &.is-warn5,
   &.is-ended { --erc-state: #{$support-error}; }
 }
 
+// Status pill: outlined while things are normal, filled once there is a warning,
+// so a change of state is visible from the back of the room.
 .erc-clock__status {
-  @include type-style("heading-compact-02");
   display: inline-flex;
   align-items: center;
-  gap: $spacing-03;
+  gap: 0.4em;
+  padding: 0.3em 0.75em 0.3em 0.45em;
+  font-family: var(--erc-font-body);
+  font-weight: 700;
+  font-size: clamp(1rem, 4.4cqw, 1.75rem);
+  line-height: 1.1;
+  svg { inline-size: 1.2em; block-size: 1.2em; flex: none; }
+  border: 1px solid currentColor;
+  border-radius: 999px;
   color: var(--erc-state);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  white-space: nowrap;
+
+  .is-warn30 &, .is-warn10 &, .is-warn5 &, .is-ended & {
+    background: var(--erc-state);
+    border-color: var(--erc-state);
+    color: #161616;
+  }
 }
 
-.erc-clock__label {
-  @include type-style("label-02");
-  color: $text-secondary;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  margin-block-end: $spacing-02;
-}
+.erc-clock__body { display: flex; flex-direction: column; gap: clamp(#{$spacing-05}, 2.4vh, #{$spacing-07}); }
 
 .erc-clock__remaining {
   font-family: var(--erc-font-clock);
-  font-weight: 700;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
-  line-height: 0.95;
-  font-size: min(24cqw, 15vh);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  font-size: min(27cqw, 14vh);
+  margin-inline-start: -0.04em; // optical alignment: digit side bearing
   white-space: nowrap;
   overflow: hidden;
   color: $text-primary;
   transition: color 400ms;
 
   .is-warn30 &, .is-warn10 &, .is-warn5 &, .is-ended & { color: var(--erc-state); }
-  .is-warn5 & { animation: erc-pulse 2s ease-in-out infinite; }
-  &.is-message { font-size: min(16cqw, 11vh); }
+  &.is-message { font-size: min(17cqw, 11vh); letter-spacing: -0.01em; }
 }
 
-.erc-clock__sub {
-  @include type-style("body-02");
-  font-size: clamp(1rem, 3.6cqw, 1.5rem);
-  color: $text-secondary;
-  margin-block-start: $spacing-03;
-  strong { color: $text-primary; font-weight: 600; }
+.erc-clock__message {
+  font-family: var(--erc-font-body);
+  font-size: clamp(1rem, 4.2cqw, 1.75rem);
+  line-height: 1.3;
+  color: $text-primary;
+  strong { font-weight: 700; }
 }
 
-.erc-clock__progress {
-  .cds--progress-bar__bar { background-color: var(--erc-state); }
-  .cds--progress-bar__helper-text { font-variant-numeric: tabular-nums; }
+.erc-clock__bar {
+  position: relative;
+  block-size: clamp(0.5rem, 1.1vh, 0.75rem);
+  background: $layer-accent-01;
+  border-radius: 999px;
+  overflow: hidden;
+  > span {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    background: var(--erc-state);
+    border-radius: inherit;
+    transition: inline-size 1s linear, background-color 400ms;
+  }
 }
 
-.erc-clock__now p {
+.erc-clock__ends {
   display: flex;
+  justify-content: space-between;
   align-items: baseline;
+  gap: $spacing-05;
+  margin-block-start: $spacing-04;
+  font-family: var(--erc-font-body);
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(0.875rem, 3cqw, 1.25rem);
+  color: $text-secondary;
+}
+.erc-clock__end {
+  font-size: clamp(1.125rem, 4.6cqw, 2rem);
+  color: $text-primary;
+  strong { font-weight: 700; }
+}
+
+.erc-clock__now {
+  margin-block-start: var(--erc-pad-y);
+  padding-block-start: var(--erc-pad-y);
+  border-block-start: 1px solid $border-subtle-01;
+}
+.erc-clock__now-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: $spacing-05;
   flex-wrap: wrap;
-  gap: $spacing-04;
+  margin-block-end: $spacing-03;
+}
+.erc-clock__label {
+  @include type-style("label-02");
+  color: $text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.erc-clock__date {
+  font-family: var(--erc-font-body);
+  font-size: clamp(0.875rem, 3cqw, 1.25rem);
+  color: $text-secondary;
 }
 .erc-clock__time {
+  display: block;
   font-family: var(--erc-font-clock);
-  font-weight: 600;
+  font-weight: 500;
+  color: $text-secondary;
   font-variant-numeric: tabular-nums;
-  font-size: min(11cqw, 7vh);
+  letter-spacing: -0.01em;
+  font-size: min(12cqw, 6.5vh);
   line-height: 1;
+  margin-inline-start: -0.03em;
 }
-.erc-clock__period { font-size: 0.45em; color: $text-secondary; margin-inline-start: 0.15em; }
-.erc-clock__date { @include type-style("body-02"); color: $text-secondary; }
+.erc-clock__period { font-size: 0.42em; font-weight: 500; color: $text-secondary; margin-inline-start: 0.25em; letter-spacing: 0.02em; }
 
-@keyframes erc-pulse { 50% { opacity: 0.55; } }
+// Fixed-width digits (see Digits.tsx); separators stay narrow.
+.erc-digit { display: inline-block; inline-size: var(--erc-digit-w, 0.6em); text-align: center; }
+
 @media (prefers-reduced-motion: reduce) {
-  .erc-clock__remaining { animation: none !important; transition: none; }
+  .erc-clock__remaining { transition: none; }
+  .erc-clock__bar > span { transition: none; }
 }
+
+// Light theme: dark text fails contrast on the red pill, so use white there.
+:root[data-carbon-theme="white"] .erc-clock:is(.is-warn5, .is-ended) .erc-clock__status { color: #ffffff; }

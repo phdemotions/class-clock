@@ -1,4 +1,4 @@
-@use "@carbon/react/scss/breakpoint" as *;
+@use "../styles/stage" as *;
 
 // The cover is always paper-coloured, whatever the app theme, so it matches the
 // real booklet on the desk. Colours are local tokens, not Carbon theme tokens.
@@ -16,7 +16,7 @@
   container-type: size;
   display: flex;
   align-items: flex-end;
-  justify-content: center;
+  justify-content: flex-start; // share the column's left edge with the clock panel
 }
 
 .erc-booklet__page {
@@ -25,7 +25,9 @@
   aspect-ratio: 100 / 71;
   background: var(--paper);
   color: var(--paper-ink);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 12px 32px rgb(0 0 0 / 25%);
+  outline: 1px solid rgb(0 0 0 / 14%);
+  :root[data-carbon-theme="white"] & { outline-color: rgb(0 0 0 / 22%); box-shadow: 0 1px 3px rgb(0 0 0 / 18%), 0 6px 18px rgb(0 0 0 / 12%); }
+  box-shadow: 0 1px 2px rgb(0 0 0 / 20%), 0 8px 24px rgb(0 0 0 / 18%);
   overflow: hidden;
   font-family: var(--form-font);
 }
@@ -105,19 +107,40 @@
 .erc-booklet__line > .erc-booklet__note {
   position: static;
   max-inline-size: 100%;
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
-.erc-booklet__id-note { padding: 0; white-space: nowrap; }
+.erc-booklet__line > .erc-booklet__pen { white-space: nowrap; text-overflow: ellipsis; }
+// Long instructions wrap to a second line above the rule instead of being cut off.
+.erc-booklet__line > .erc-booklet__note {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  text-wrap: balance;
+}
+.erc-booklet__line:not(.is-center) { padding-inline-start: 1.2cqw; }
+.erc-booklet__id-note {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 1.6cqw;
+  white-space: nowrap;
+  pointer-events: none;
+  > span:last-child, &::before { position: static; }
+}
+// Sits on the boxes like a sticky label, so the box lines don't strike through it.
+.erc-booklet__id-note-text { background: var(--paper); padding: 0.2cqw 0.8cqw; position: static; }
 
 .erc-booklet__id-boxes {
   block-size: 2.9cqw;
   border-block-end: 0.14cqw solid var(--paper-ink);
   display: grid;
   grid-template-columns: repeat(9, 1fr);
-  > span { position: static; border-inline-start: 0.14cqw solid var(--paper-ink); }
-  > span:last-child { border-inline-end: 0.14cqw solid var(--paper-ink); }
+  > span[aria-hidden] { position: static; border-inline-start: 0.14cqw solid var(--paper-ink); }
+  > span[aria-hidden]:nth-child(9) { border-inline-end: 0.14cqw solid var(--paper-ink); }
 }
 
 .erc-booklet__key {
@@ -132,8 +155,19 @@
   .erc-booklet__note { font-size: 1.75cqw; padding: 0; }
 }
 
-// Small and medium screens: the cover takes the full column width and sets its own height.
-@include breakpoint-down(lg) {
-  .erc-booklet { block-size: auto; container-type: inline-size; }
-  .erc-booklet__page { inline-size: 100%; }
+// Outside the one-screen layout the cover takes the full column width and sets its own height.
+// On phones the drawing keeps a readable minimum size and scrolls sideways inside its own box.
+.erc-booklet { block-size: auto; container-type: normal; overflow-x: auto; }
+.erc-booklet__page { inline-size: 100%; min-inline-size: 36rem; }
+@include stage {
+  .erc-booklet-tile {
+    block-size: 100%;
+    min-block-size: 0;
+    box-sizing: border-box;
+    padding: clamp(0.5rem, 1.2vh, 1rem);
+    background: var(--erc-tile-bg);
+    border: 1px solid var(--erc-tile-border);
+  }
+  .erc-booklet { block-size: 100%; container-type: size; overflow: visible; justify-content: center; align-items: center; }
+  .erc-booklet__page { inline-size: min(100cqw, calc(100cqh * 100 / 71)); min-inline-size: 0; }
 }

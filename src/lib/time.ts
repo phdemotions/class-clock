@@ -63,14 +63,14 @@ export function progress(win: SessionWindow, now: Date): number {
   return Math.min(1, Math.max(0, (now.getTime() - win.start.getTime()) / total));
 }
 
-/** "1:05:09" when an hour or more is left, otherwise "05:09". Rounds up so 0:00 means time is up. */
+/** "1:05:09" when an hour or more is left, otherwise "5:09". Rounds up so 0:00 means time is up. */
 export function formatDuration(ms: number): string {
   const total = Math.max(0, Math.ceil(ms / 1000));
   const h = Math.floor(total / 3600);
   const m = Math.floor((total % 3600) / 60);
   const s = total % 60;
   const pad = (n: number) => String(n).padStart(2, "0");
-  return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
+  return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
 }
 
 export interface ClockParts {

@@ -72,10 +72,10 @@ export function App() {
           Class Clock
         </HeaderName>
         {settings.isExample && (
-          <Tag type="warm-gray" size="sm" className="erc-header__example">Example details</Tag>
+          <Tag type="red" size="md" className="erc-header__example">Example details</Tag>
         )}
-        <HeaderGlobalBar>
-          <HeaderGlobalAction aria-label="Set up (S)" tooltipAlignment="end" onClick={() => setSetupOpen(true)}>
+        <HeaderGlobalBar className="erc-header__actions">
+          <HeaderGlobalAction aria-label="Setup (S)" tooltipAlignment="end" onClick={() => setSetupOpen(true)}>
             <SettingsIcon size={20} />
           </HeaderGlobalAction>
           {fullscreen.supported && (

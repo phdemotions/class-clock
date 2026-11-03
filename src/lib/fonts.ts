@@ -16,7 +16,9 @@ import "@fontsource/merriweather/700.css";
 import "@fontsource/merriweather/400-italic.css";
 import "@fontsource-variable/source-serif-4";
 import "@fontsource/ibm-plex-sans/400.css";
+import "@fontsource/ibm-plex-sans/500.css";
 import "@fontsource/ibm-plex-sans/600.css";
+import "@fontsource/ibm-plex-sans/700.css";
 import "@fontsource/ibm-plex-sans/400-italic.css";
 // Booklet cover only: printed-form sans and a handwriting face.
 import "@fontsource/arimo/400.css";
@@ -36,7 +38,7 @@ export const FONT_OPTIONS: readonly FontOption[] = [
   { id: "russo-one", label: "Russo One", stack: '"Russo One", "Arial Black", Arial, sans-serif', note: "U of G heading font" },
   { id: "atkinson", label: "Atkinson Hyperlegible", stack: '"Atkinson Hyperlegible", Arial, sans-serif', note: "Designed for low vision" },
   { id: "lexend", label: "Lexend", stack: '"Lexend Variable", Lexend, Arial, sans-serif', note: "Designed for easier reading" },
-  { id: "ibm-plex-sans", label: "IBM Plex Sans", stack: '"IBM Plex Sans", Arial, sans-serif', note: "Carbon default" },
+  { id: "ibm-plex-sans", label: "IBM Plex Sans", stack: '"IBM Plex Sans", Arial, sans-serif', note: "even-width digits" },
   { id: "roboto", label: "Roboto", stack: '"Roboto Variable", Roboto, Arial, sans-serif' },
   { id: "open-sans", label: "Open Sans", stack: '"Open Sans Variable", "Open Sans", Arial, sans-serif' },
   { id: "merriweather", label: "Merriweather", stack: 'Merriweather, Georgia, serif' },
@@ -46,8 +48,12 @@ export const FONT_OPTIONS: readonly FontOption[] = [
   { id: "georgia", label: "Georgia", stack: 'Georgia, "Times New Roman", serif' },
 ];
 
-/** University of Guelph brand fonts. The clock uses DM Sans because Russo One's digits crowd together at large sizes. */
-export const UOFG_FONTS = { heading: "russo-one", body: "dm-sans", clock: "dm-sans" } as const;
+/**
+ * Defaults. Headings and text use the University of Guelph brand fonts. The clock uses
+ * IBM Plex Sans because its digits all have the same width (DM Sans and Russo One draw
+ * "1" much narrower than "0"), so the countdown stays steady and evenly spaced.
+ */
+export const UOFG_FONTS = { heading: "russo-one", body: "dm-sans", clock: "ibm-plex-sans" } as const;
 
 export const fontById = (id: string): FontOption =>
   FONT_OPTIONS.find((f) => f.id === id) ?? (FONT_OPTIONS[0] as FontOption);

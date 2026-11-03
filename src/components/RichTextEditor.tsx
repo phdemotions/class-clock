@@ -1,4 +1,4 @@
-import { IconButton, Select, SelectItem } from "@carbon/react";
+import { IconButton, Select, SelectItem, Tooltip } from "@carbon/react";
 import {
   ListBulleted, ListNumbered, Redo, TextBold, TextClearFormat, TextItalic, TextUnderline, Undo,
 } from "@carbon/icons-react";
@@ -121,16 +121,16 @@ export function RichTextEditor({ value, onChange, labelId }: Props) {
         <span className="erc-editor__sep" />
         <div className="erc-editor__colors" role="group" aria-label="Text colour">
           {COLORS.map((c) => (
-            <button
-              key={c.label}
-              type="button"
-              className={`erc-editor__swatch${state.color === c.value ? " is-selected" : ""}`}
-              style={c.value ? { background: c.value } : undefined}
-              aria-label={`${c.label} text`}
-              aria-pressed={state.color === c.value}
-              title={`${c.label} text`}
-              onClick={() => (c.value ? chain().setColor(c.value).run() : chain().unsetColor().run())}
-            />
+            <Tooltip key={c.label} label={`${c.label} text`} align="bottom">
+              <button
+                type="button"
+                className={`erc-editor__swatch${state.color === c.value ? " is-selected" : ""}`}
+                style={c.value ? { background: c.value } : undefined}
+                aria-label={`${c.label} text`}
+                aria-pressed={state.color === c.value}
+                onClick={() => (c.value ? chain().setColor(c.value).run() : chain().unsetColor().run())}
+              />
+            </Tooltip>
           ))}
         </div>
         <span className="erc-editor__sep" />

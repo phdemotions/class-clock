@@ -1,12 +1,13 @@
 import {
-  Button, ContentSwitcher, Modal, RadioButton, RadioButtonGroup, Select, SelectItem, Stack,
-  Switch, Tab, TabList, TabPanel, TabPanels, Tabs, TextInput, Toggle,
+  Button, ContentSwitcher, FormGroup, InlineNotification, Modal, RadioButton, RadioButtonGroup, Select, SelectItem,
+  Stack, Switch, Tab, TabList, TabPanel, TabPanels, Tabs, TextInput,
 } from "@carbon/react";
 import { useState } from "react";
 import { FONT_OPTIONS, UOFG_FONTS } from "../lib/fonts";
 import { defaultSettings, type Settings, type ThemeChoice } from "../lib/settings";
 import { addMinutes, durationMinutes, parseHM, toHM } from "../lib/time";
 import { RichTextEditor } from "./RichTextEditor";
+import { TimeField } from "./TimeField";
 import "./SetupModal.scss";
 
 interface Props {
@@ -22,28 +23,36 @@ const THEMES: { id: ThemeChoice; text: string }[] = [
   { id: "system", text: "Match device" },
 ];
 
+const LENGTHS = [15, 20, 30, 45, 50, 60, 75, 80, 90, 110, 120, 150, 180];
+const lengthText = (m: number) => {
+  const h = Math.floor(m / 60);
+  const r = m % 60;
+  return h ? `${h} h${r ? ` ${r} min` : ""}` : `${m} min`;
+};
+
 /** Rendered only while open, so each opening starts from the saved settings. */
 export function SetupModal(props: Props) {
   if (!props.open) return null;
   return <SetupForm {...props} />;
 }
 
+type Section = "session" | "booklet" | "appearance";
+
 function SetupForm({ settings, onClose, onSave }: Props) {
   const [draft, setDraft] = useState<Settings>(() => structuredClone(settings));
   const [submitted, setSubmitted] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
 
-  type Section = "session" | "booklet" | "appearance";
   const set = <K extends Section>(key: K, patch: Partial<Settings[K]>) =>
     setDraft((d) => ({ ...d, [key]: { ...d[key], ...patch } }));
 
-  const startOk = parseHM(draft.session.start) !== null;
-  const endOk = parseHM(draft.session.end) !== null;
-  const sameTime = startOk && endOk && draft.session.start === draft.session.end;
-  const valid = startOk && endOk && !sameTime;
+  const { start, end, use24h } = draft.session;
+  const timesOk = parseHM(start) !== null && parseHM(end) !== null && start !== end;
+  const length = timesOk ? durationMinutes(start, end) : 0;
 
   const save = () => {
     setSubmitted(true);
-    if (!valid) return;
+    if (!timesOk) return;
     onSave({ ...draft, isExample: false });
   };
 
@@ -56,20 +65,19 @@ function SetupForm({ settings, onClose, onSave }: Props) {
   return (
     <Modal
       open
-      size="lg"
-      modalHeading="Set up"
+      size="md"
+      modalHeading="Setup"
       modalLabel="Class Clock"
       primaryButtonText="Save and show"
       secondaryButtonText="Cancel"
       onRequestClose={onClose}
       onRequestSubmit={save}
       preventCloseOnClickOutside
-      hasScrollingContent
       className="erc-setup"
     >
-      <p className="erc-setup__intro">Settings are saved in this browser only. Set up on the computer connected to the projector.</p>
+      <p className="erc-setup__intro">Saved in this browser only, so set up on the computer connected to the projector.</p>
       <Tabs>
-        <TabList aria-label="Setup sections" contained>
+        <TabList aria-label="Setup sections">
           <Tab>Instructions</Tab>
           <Tab>Booklet cover</Tab>
           <Tab>Time</Tab>
@@ -77,101 +85,121 @@ function SetupForm({ settings, onClose, onSave }: Props) {
         </TabList>
         <TabPanels>
           <TabPanel>
-            <Stack gap={4}>
-              <p id="erc-instr-label" className="cds--label">Instructions</p>
+            <Stack gap={3}>
+              <p id="erc-instr-label" className="cds--label">Instructions shown to students</p>
               <RichTextEditor labelId="erc-instr-label" value={draft.instructionsHtml} onChange={(html) => setDraft((d) => ({ ...d, instructionsHtml: html }))} />
-              <p className="erc-setup__help">Shown exactly as formatted. On large screens the text resizes to fill the instructions panel.</p>
+              <p className="cds--form__helper-text">Shown exactly as formatted. On the projector the text resizes to fill the panel.</p>
             </Stack>
           </TabPanel>
 
           <TabPanel>
-            <Stack gap={6}>
-              <p className="erc-setup__help">These appear on the cover in blue, exactly as students should copy them.</p>
-              <div className="erc-setup__grid">
-                <TextInput id="erc-course" labelText="Course number" placeholder="e.g. PSYC*3250" maxLength={40}
-                  value={draft.session.courseNumber} onChange={(e) => set("session", { courseNumber: e.target.value })} />
-                <TextInput id="erc-title" labelText="Course title" placeholder="e.g. Consumer Psychology" maxLength={120}
-                  value={draft.session.courseTitle} onChange={(e) => set("session", { courseTitle: e.target.value })} />
-                <TextInput id="erc-instructor" labelText="Instructor" placeholder="e.g. Dr. A. Lee" maxLength={80}
-                  value={draft.session.instructor} onChange={(e) => set("session", { instructor: e.target.value })} />
-                <TextInput id="erc-date" labelText="Date" helperText="As students should write it" maxLength={60}
-                  value={draft.session.dateText} onChange={(e) => set("session", { dateText: e.target.value })} />
-                <TextInput id="erc-session-name" labelText="Title" helperText="Shown at the top of the cover and the instructions, e.g. Final Examination, Quiz 2 or Reflection 3" placeholder="e.g. Reflection 3" maxLength={80}
-                  className="erc-setup__full" value={draft.session.title} onChange={(e) => set("session", { title: e.target.value })} />
-              </div>
-              <div className="erc-setup__grid">
-                <TextInput id="erc-book" labelText="Book Number line" maxLength={60}
-                  helperText="e.g. “1 on your first booklet, 2 on the next…”, or a word like MAPLE to check attendance"
-                  value={draft.booklet.bookNumberText} onChange={(e) => set("booklet", { bookNumberText: e.target.value })} />
-                <RadioButtonGroup legendText="Show it as" name="erc-book-style" orientation="vertical"
-                  valueSelected={draft.booklet.bookNumberStyle}
-                  onChange={(v) => set("booklet", { bookNumberStyle: v as Settings["booklet"]["bookNumberStyle"] })}>
-                  <RadioButton id="erc-book-note" value="instruction" labelText="Orange: an instruction for students" />
-                  <RadioButton id="erc-book-copy" value="copy" labelText="Blue: students copy it exactly" />
-                </RadioButtonGroup>
-              </div>
+            <Stack gap={7}>
+              <TextInput id="erc-title" labelText="Title" maxLength={80}
+                helperText="Shown above the instructions and on the cover, e.g. Final Examination, Quiz 2 or Reflection 3"
+                value={draft.session.title} onChange={(e) => set("session", { title: e.target.value })} />
+              <FormGroup legendText="Copied by students exactly (blue on the cover)">
+                <div className="erc-setup__grid">
+                  <TextInput id="erc-course" labelText="Course number" placeholder="PSYC*3250" maxLength={40}
+                    value={draft.session.courseNumber} onChange={(e) => set("session", { courseNumber: e.target.value })} />
+                  <TextInput id="erc-course-title" labelText="Course title" placeholder="Consumer Psychology" maxLength={120}
+                    value={draft.session.courseTitle} onChange={(e) => set("session", { courseTitle: e.target.value })} />
+                  <TextInput id="erc-instructor" labelText="Instructor" placeholder="Dr. A. Lee" maxLength={80}
+                    value={draft.session.instructor} onChange={(e) => set("session", { instructor: e.target.value })} />
+                  <TextInput id="erc-date" labelText="Date" placeholder="November 3, 2026" maxLength={60}
+                    value={draft.session.dateText} onChange={(e) => set("session", { dateText: e.target.value })} />
+                </div>
+              </FormGroup>
+              <FormGroup legendText="Book Number line">
+                <Stack gap={5}>
+                  <TextInput id="erc-book" labelText="Text on the line" maxLength={60}
+                    helperText="An instruction, or a word such as MAPLE to check attendance"
+                    value={draft.booklet.bookNumberText} onChange={(e) => set("booklet", { bookNumberText: e.target.value })} />
+                  <RadioButtonGroup legendText="Show it as" name="erc-book-style" orientation="horizontal"
+                    valueSelected={draft.booklet.bookNumberStyle}
+                    onChange={(v) => set("booklet", { bookNumberStyle: v as Settings["booklet"]["bookNumberStyle"] })}>
+                    <RadioButton id="erc-book-note" value="instruction" labelText="Instruction (orange)" />
+                    <RadioButton id="erc-book-copy" value="copy" labelText="Copy exactly (blue)" />
+                  </RadioButtonGroup>
+                </Stack>
+              </FormGroup>
             </Stack>
           </TabPanel>
 
           <TabPanel>
-            <Stack gap={6}>
-              <p className="erc-setup__help">Times are for today. An end time earlier than the start means it runs past midnight.</p>
-              <div className="erc-setup__grid">
-                <TextInput id="erc-start" type="time" labelText="Start time" value={draft.session.start}
-                  invalid={submitted && (!startOk || sameTime)} invalidText={!startOk ? "Enter a start time." : "Start and end can’t be the same."}
-                  onChange={(e) => set("session", { start: e.target.value })} />
-                <TextInput id="erc-end" type="time" labelText="End time" value={draft.session.end}
-                  invalid={submitted && !endOk} invalidText="Enter an end time."
-                  onChange={(e) => set("session", { end: e.target.value })} />
+            <Stack gap={7}>
+              <div className="erc-setup__grid erc-setup__grid--time">
+                <TimeField id="erc-start" label="Start time" value={start} use24h={use24h}
+                  onChange={(hm) => set("session", { start: hm, end: length ? addMinutes(hm, length) : end })} />
+                <Select id="erc-length" labelText="Length" value={LENGTHS.includes(length) ? String(length) : "custom"}
+                  onChange={(e) => e.target.value !== "custom" && set("session", { end: addMinutes(start, Number(e.target.value)) })}>
+                  {!LENGTHS.includes(length) && <SelectItem value="custom" text={length ? lengthText(length) : "Choose"} />}
+                  {LENGTHS.map((m) => <SelectItem key={m} value={String(m)} text={lengthText(m)} />)}
+                </Select>
+                <TimeField id="erc-end" label="End time" value={end} use24h={use24h}
+                  invalidText={submitted && !timesOk ? "End time must differ from the start time." : undefined}
+                  onChange={(hm) => set("session", { end: hm })} />
               </div>
-              <div className="erc-setup__quick" role="group" aria-label="Set length">
-                <span className="cds--label">Length from start</span>
-                {[60, 90, 120, 150, 180].map((m) => (
-                  <Button key={m} kind="tertiary" size="sm" disabled={!startOk}
-                    onClick={() => set("session", { end: addMinutes(draft.session.start, m) })}>
-                    {`${m / 60} h`}
-                  </Button>
-                ))}
-                <Button kind="primary" size="sm" onClick={() => {
-                  const len = startOk && endOk && !sameTime ? durationMinutes(draft.session.start, draft.session.end) : 120;
-                  const start = toHM(new Date());
-                  set("session", { start, end: addMinutes(start, len) });
+              <div className="erc-setup__row">
+                <Button kind="tertiary" size="md" onClick={() => {
+                  const now = toHM(new Date());
+                  set("session", { start: now, end: addMinutes(now, length || 60) });
                 }}>
                   Start now
                 </Button>
+                <p className="cds--form__helper-text">Starts from this minute and keeps the length. Times are for today; an end time before the start runs past midnight.</p>
               </div>
-              <Toggle id="erc-24h" labelText="Clock format" labelA="12-hour" labelB="24-hour"
-                toggled={draft.session.use24h} onToggle={(v) => set("session", { use24h: v })} />
+              <RadioButtonGroup legendText="Clock format" name="erc-format" orientation="horizontal"
+                valueSelected={use24h ? "24" : "12"} onChange={(v) => set("session", { use24h: v === "24" })}>
+                <RadioButton id="erc-12h" value="12" labelText="12-hour (4:30 PM)" />
+                <RadioButton id="erc-24h" value="24" labelText="24-hour (16:30)" />
+              </RadioButtonGroup>
             </Stack>
           </TabPanel>
 
           <TabPanel>
-            <Stack gap={6}>
-              <div>
+            <Stack gap={7}>
+              <div className="erc-setup__narrow">
                 <p className="cds--label" id="erc-theme-label">Theme</p>
                 <ContentSwitcher
+                  size="md"
                   aria-labelledby="erc-theme-label"
                   selectedIndex={THEMES.findIndex((t) => t.id === draft.appearance.theme)}
                   onChange={({ index }) => set("appearance", { theme: THEMES[index ?? 0]?.id ?? "dark" })}
                 >
                   {THEMES.map((t) => <Switch key={t.id} name={t.id} text={t.text} />)}
                 </ContentSwitcher>
-                <p className="erc-setup__help">Dark reduces projector glare. Light suits very bright rooms.</p>
+                <p className="cds--form__helper-text">Dark reduces projector glare. Light suits very bright rooms.</p>
               </div>
-              <div className="erc-setup__grid erc-setup__grid--3">
-                {fontSelect("erc-font-heading", "Headings", draft.appearance.headingFont, (v) => set("appearance", { headingFont: v }))}
-                {fontSelect("erc-font-body", "Instructions text", draft.appearance.bodyFont, (v) => set("appearance", { bodyFont: v }))}
-                {fontSelect("erc-font-clock", "Clock numbers", draft.appearance.clockFont, (v) => set("appearance", { clockFont: v }))}
+              <FormGroup legendText="Fonts">
+                <Stack gap={5}>
+                  <div className="erc-setup__grid erc-setup__grid--3">
+                    {fontSelect("erc-font-heading", "Headings", draft.appearance.headingFont, (v) => set("appearance", { headingFont: v }))}
+                    {fontSelect("erc-font-body", "Instructions", draft.appearance.bodyFont, (v) => set("appearance", { bodyFont: v }))}
+                    {fontSelect("erc-font-clock", "Clock", draft.appearance.clockFont, (v) => set("appearance", { clockFont: v }))}
+                  </div>
+                  <div className="erc-setup__row">
+                    <Button kind="tertiary" size="md" onClick={() => set("appearance", { headingFont: UOFG_FONTS.heading, bodyFont: UOFG_FONTS.body, clockFont: UOFG_FONTS.clock })}>
+                      Use default fonts
+                    </Button>
+                    <p className="cds--form__helper-text">U of G fonts for headings (Russo One) and text (DM Sans), with IBM Plex Sans for the clock because its digits are all the same width.</p>
+                  </div>
+                </Stack>
+              </FormGroup>
+              <div className="erc-setup__danger">
+                {confirmReset ? (
+                  <Stack gap={4}>
+                    <InlineNotification kind="warning" lowContrast hideCloseButton
+                      title="Replace everything with the example?"
+                      subtitle="Your instructions and details are replaced when you save." />
+                    <div className="erc-setup__row">
+                      <Button kind="danger" size="md" onClick={() => { setDraft(defaultSettings()); setConfirmReset(false); }}>Replace with example</Button>
+                      <Button kind="secondary" size="md" onClick={() => setConfirmReset(false)}>Keep mine</Button>
+                    </div>
+                  </Stack>
+                ) : (
+                  <Button kind="danger--ghost" size="md" onClick={() => setConfirmReset(true)}>Reset to example…</Button>
+                )}
               </div>
-              <div className="erc-setup__quick">
-                <Button kind="tertiary" size="sm" onClick={() => set("appearance", { headingFont: UOFG_FONTS.heading, bodyFont: UOFG_FONTS.body, clockFont: UOFG_FONTS.clock })}>
-                  Use U of G fonts
-                </Button>
-                <Button kind="ghost" size="sm" onClick={() => setDraft(defaultSettings())}>
-                  Reset everything to the example
-                </Button>
-              </div>
-              <p className="erc-setup__help">Defaults are the University of Guelph brand fonts: Russo One for headings and DM Sans for text. The clock uses DM Sans because Russo One’s digits crowd together at large sizes. The booklet cover keeps its printed look.</p>
             </Stack>
           </TabPanel>
         </TabPanels>

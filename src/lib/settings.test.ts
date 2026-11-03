@@ -13,6 +13,7 @@ describe("settings", () => {
     expect(s.session.end).toBe("11:00");
     expect(s.appearance.headingFont).toBe("russo-one");
     expect(s.appearance.bodyFont).toBe("dm-sans");
+    expect(s.appearance.clockFont).toBe("ibm-plex-sans");
   });
   it("round-trips through storage", () => {
     const store = memoryStorage();

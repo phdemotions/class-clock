@@ -50,7 +50,7 @@ const pos = (left: number, top: number, width?: number): CSSProperties => ({
 
 function InkText({ ink, width }: { ink: Ink; width: number }): ReactNode {
   // Long text gets a smaller size so it stays on its line.
-  const long = ink.text.length > (ink.kind === "copy" ? width * 0.55 : width * 0.85);
+  const long = ink.text.length > (ink.kind === "copy" ? width * 0.55 : width * 0.75);
   return (
     <span className={`erc-booklet__${ink.kind === "copy" ? "pen" : "note"}${long ? " is-long" : ""}`}>
       {ink.kind === "note" && <span aria-hidden="true">✎ </span>}
@@ -62,6 +62,7 @@ function InkText({ ink, width }: { ink: Ink; width: number }): ReactNode {
 export function BookletCover({ settings }: { settings: Settings }) {
   const { session } = settings;
   return (
+    <div className="erc-booklet-tile">
     <figure className="erc-booklet" aria-labelledby="booklet-caption">
       <figcaption id="booklet-caption" className="cds--visually-hidden">
         How to fill in the front of your booklet
@@ -88,15 +89,15 @@ export function BookletCover({ settings }: { settings: Settings }) {
             </Fragment>
           ))}
 
-          <div className="erc-booklet__id-boxes" style={pos(3.6, 32.1, 44)} aria-hidden="true">
+          <div className="erc-booklet__id-boxes" style={pos(3.6, 32.1, 44)}>
             {Array.from({ length: 9 }, (_, i) => (
-              <span key={i} />
+              <span key={i} aria-hidden="true" />
             ))}
+            <span className="erc-booklet__note erc-booklet__id-note">
+              <span className="erc-booklet__id-note-text"><span aria-hidden="true">✎ </span>your student ID, one digit per box</span>
+            </span>
           </div>
           <span className="erc-booklet__label erc-booklet__label--free" style={pos(3.6, 35.6)}>I.D. Number</span>
-          <span className="erc-booklet__note erc-booklet__id-note" style={pos(15, 35.3)}>
-            <span aria-hidden="true">✎ </span>your student ID, one digit per box
-          </span>
 
           <div className="erc-booklet__key" style={{ ...pos(3.6, 63.2), right: "3cqw" }}>
             <span>
@@ -109,5 +110,6 @@ export function BookletCover({ settings }: { settings: Settings }) {
         </div>
       </div>
     </figure>
+    </div>
   );
 }

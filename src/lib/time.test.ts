@@ -45,9 +45,9 @@ describe("sessionPhase", () => {
 describe("formatting", () => {
   it("formats durations", () => {
     expect(formatDuration(3_725_000)).toBe("1:02:05");
-    expect(formatDuration(65_000)).toBe("01:05");
-    expect(formatDuration(-1)).toBe("00:00");
-    expect(formatDuration(400)).toBe("00:01");
+    expect(formatDuration(65_000)).toBe("1:05");
+    expect(formatDuration(-1)).toBe("0:00");
+    expect(formatDuration(400)).toBe("0:01");
   });
   it("formats clock times", () => {
     expect(formatClock(at(15, 4, 9), false, true)).toEqual({ time: "3:04:09", period: "PM" });

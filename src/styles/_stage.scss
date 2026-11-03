@@ -1,0 +1,9 @@
+// "Stage" layout: side-by-side columns that fit on one screen with no scrolling.
+// Used on wide screens and on landscape screens from 960px (e.g. 1024x768 projectors).
+// Keep in sync with STAGE_QUERY in src/lib/layout.ts.
+$stage: "(min-width: 60rem) and (orientation: landscape), (min-width: 66rem)";
+$not-stage: "not all and (min-width: 60rem) and (orientation: landscape), not all and (min-width: 66rem)";
+
+@mixin stage {
+  @media #{$stage} { @content; }
+}

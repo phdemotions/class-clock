@@ -4,19 +4,32 @@
 @use "@carbon/react/scss/breakpoint" as *;
 
 .erc-setup {
-  .cds--tab-content { padding-block: $spacing-06 0; padding-inline: 0; }
-  .cds--modal-content { margin-block-end: $spacing-07; }
+  .cds--tab-content { padding: $spacing-07 0 $spacing-03; }
+  .cds--tabs { margin-inline: -$spacing-05; inline-size: calc(100% + #{2 * $spacing-05}); }
+  .cds--tabs .cds--tab--list { padding-inline: $spacing-05; }
+  .cds--fieldset { margin-block-end: 0; }
+  .cds--time-picker, .cds--time-picker__input { inline-size: 100%; }
+  .cds--time-picker__input-field { inline-size: 100%; }
 }
-.erc-setup__intro, .erc-setup__help { @include type-style("helper-text-02"); color: $text-secondary; }
-.erc-setup__intro { margin-block-end: $spacing-05; }
-.erc-setup__help { margin-block-start: $spacing-03; }
+.erc-setup__intro { @include type-style("body-01"); color: $text-secondary; margin-block-end: $spacing-05; }
 
 .erc-setup__grid {
   display: grid;
-  gap: $spacing-06;
+  gap: $spacing-06 $spacing-05;
   grid-template-columns: 1fr;
   @include breakpoint(md) { grid-template-columns: 1fr 1fr; }
-  &--3 { @include breakpoint(lg) { grid-template-columns: repeat(3, 1fr); } }
+  &--time, &--3 { @include breakpoint(md) { grid-template-columns: repeat(3, 1fr); } }
 }
-.erc-setup__full { @include breakpoint(md) { grid-column: 1 / -1; } }
-.erc-setup__quick { display: flex; flex-wrap: wrap; align-items: center; gap: $spacing-03; .cds--label { margin: 0 $spacing-03 0 0; } }
+.erc-setup__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $spacing-03 $spacing-05;
+  .cds--form__helper-text { margin: 0; flex: 1 1 16rem; max-inline-size: 40rem; }
+}
+.erc-setup__narrow { max-inline-size: 28rem; }
+.erc-setup__danger {
+  padding-block-start: $spacing-06;
+  border-block-start: 1px solid $border-subtle-01;
+  .cds--inline-notification { max-inline-size: none; }
+}

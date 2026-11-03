@@ -1,0 +1,36 @@
+// Shared panel: the instructions and the clock use the same surface, padding,
+// header height and divider, so their edges and header rules line up across columns.
+@use "@carbon/react/scss/theme" as *;
+@use "@carbon/react/scss/spacing" as *;
+
+.erc-panel {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  min-block-size: 0;
+  background: $layer-01;
+  border: 1px solid $border-subtle-01;
+  padding: var(--erc-pad-y) var(--erc-pad-x);
+}
+
+.erc-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $spacing-03 $spacing-05;
+  min-block-size: var(--erc-panel-head, 3rem);
+  padding-block-end: var(--erc-pad-y);
+  margin-block-end: var(--erc-pad-y);
+  border-block-end: 1px solid $border-subtle-01;
+}
+
+.erc-panel__title {
+  font-family: var(--erc-font-heading);
+  font-weight: 400;
+  font-synthesis: none;
+  font-size: var(--erc-panel-title, clamp(1.5rem, 2.1vw, 2.5rem));
+  line-height: 1.1;
+  color: $text-primary;
+  text-wrap: balance;
+}

@@ -51,7 +51,7 @@ export const EXAMPLE_INSTRUCTIONS =
   "<p>Need another booklet? Raise your hand.</p>" +
   "<p>Answer in the booklet, <u>not</u> on the question sheet.</p>" +
   "<h3>When time is up</h3>" +
-  '<p><span style="color: var(--erc-ink-yellow)">Stop writing</span> and stay seated until booklets are collected.</p>';
+  '<p><strong>Stop writing</strong> and stay seated until booklets are collected.</p>';
 
 export function defaultSettings(now = new Date()): Settings {
   const start = new Date(now);
@@ -70,7 +70,7 @@ export function defaultSettings(now = new Date()): Settings {
       end: toHM(end),
       use24h: false,
     },
-    booklet: { bookNumberText: "1 on your first booklet, 2 on the next…", bookNumberStyle: "instruction" },
+    booklet: { bookNumberText: "1 on your first booklet, 2 on your second", bookNumberStyle: "instruction" },
     instructionsHtml: EXAMPLE_INSTRUCTIONS,
     appearance: { theme: "dark", headingFont: UOFG_FONTS.heading, bodyFont: UOFG_FONTS.body, clockFont: UOFG_FONTS.clock },
   };

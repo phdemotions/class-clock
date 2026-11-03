@@ -18,10 +18,10 @@
 
   .cds--form-item, .cds--select { flex: none; inline-size: auto; }
   .cds--select-input__wrapper { inline-size: auto; }
-  .cds--select--inline .cds--select-input { inline-size: auto; padding-inline-end: $spacing-07; }
+  .cds--select--inline .cds--select-input { inline-size: auto; max-inline-size: 8.5rem; padding-inline-end: $spacing-07; text-overflow: ellipsis; }
 }
 
-.erc-editor__sep { inline-size: 1px; align-self: stretch; background: $border-subtle-01; margin-inline: $spacing-02; }
+.erc-editor__sep { inline-size: 1px; align-self: stretch; background: $border-subtle-01; margin-inline: $spacing-01; }
 
 .erc-editor__colors { display: flex; gap: $spacing-02; }
 .erc-editor__swatch {
