@@ -8,7 +8,7 @@ import { toHM } from "./time";
  * shape changes, so saved setups keep working after updates.
  */
 export const SETTINGS_VERSION = 1;
-export const STORAGE_KEY = "exam-room-clock:settings";
+export const STORAGE_KEY = "class-clock:settings";
 
 const hm = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Use HH:MM");
 const fontId = z.enum(FONT_OPTIONS.map((f) => f.id) as [string, ...string[]]);
@@ -16,12 +16,12 @@ const fontId = z.enum(FONT_OPTIONS.map((f) => f.id) as [string, ...string[]]);
 export const settingsSchema = z.object({
   version: z.literal(SETTINGS_VERSION),
   isExample: z.boolean(),
-  exam: z.object({
+  session: z.object({
     courseNumber: z.string().max(40),
     courseTitle: z.string().max(120),
     instructor: z.string().max(80),
     dateText: z.string().max(60),
-    examName: z.string().max(80),
+    title: z.string().max(80),
     start: hm,
     end: hm,
     use24h: z.boolean(),
@@ -46,10 +46,10 @@ export const EXAMPLE_INSTRUCTIONS =
   "<h3>Before you start</h3>" +
   "<p><strong>Fill in the front of your booklet now</strong>, as shown on the booklet cover.</p>" +
   "<ul><li><p>Write in pen and print clearly.</p></li><li><p>Phones off and in your bag, under your seat.</p></li>" +
-  "<li><p>Only the materials listed on the exam paper are allowed.</p></li></ul>" +
-  "<h3>During the exam</h3>" +
+  "<li><p>Only the materials listed on the question sheet are allowed.</p></li></ul>" +
+  "<h3>While you write</h3>" +
   "<p>Need another booklet? Raise your hand.</p>" +
-  "<p>Answer in the booklet, <u>not</u> on the exam paper.</p>" +
+  "<p>Answer in the booklet, <u>not</u> on the question sheet.</p>" +
   "<h3>When time is up</h3>" +
   '<p><span style="color: var(--erc-ink-yellow)">Stop writing</span> and stay seated until booklets are collected.</p>';
 
@@ -60,12 +60,12 @@ export function defaultSettings(now = new Date()): Settings {
   return {
     version: SETTINGS_VERSION,
     isExample: true,
-    exam: {
+    session: {
       courseNumber: "PSYC*3250",
       courseTitle: "Consumer Psychology",
       instructor: "Dr. A. Lee",
       dateText: now.toLocaleDateString("en-CA", { month: "long", day: "numeric", year: "numeric" }),
-      examName: "Final Examination",
+      title: "Reflection 3",
       start: toHM(start),
       end: toHM(end),
       use24h: false,

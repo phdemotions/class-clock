@@ -1,4 +1,4 @@
-import { addMinutes, durationMinutes, examPhase, examWindow, formatClock, formatDuration, parseHM, progress } from "./time";
+import { addMinutes, durationMinutes, sessionPhase, sessionWindow, formatClock, formatDuration, parseHM, progress } from "./time";
 
 const at = (h: number, m: number, s = 0) => new Date(2026, 10, 3, h, m, s);
 
@@ -10,22 +10,22 @@ describe("parseHM", () => {
   });
 });
 
-describe("examWindow", () => {
+describe("sessionWindow", () => {
   it("uses today's date", () => {
-    const w = examWindow("09:00", "11:00", at(8, 0));
+    const w = sessionWindow("09:00", "11:00", at(8, 0));
     expect(w.start).toEqual(at(9, 0));
     expect(w.end).toEqual(at(11, 0));
   });
-  it("handles exams that run past midnight", () => {
-    const w = examWindow("23:00", "01:00", at(23, 30));
+  it("handles sessions that run past midnight", () => {
+    const w = sessionWindow("23:00", "01:00", at(23, 30));
     expect(w.end.getTime() - w.start.getTime()).toBe(2 * 3600_000);
-    const afterMidnight = examWindow("23:00", "01:00", new Date(2026, 10, 4, 0, 15));
-    expect(examPhase(afterMidnight, new Date(2026, 10, 4, 0, 15))).toBe("running");
+    const afterMidnight = sessionWindow("23:00", "01:00", new Date(2026, 10, 4, 0, 15));
+    expect(sessionPhase(afterMidnight, new Date(2026, 10, 4, 0, 15))).toBe("running");
   });
 });
 
-describe("examPhase", () => {
-  const w = examWindow("09:00", "11:00", at(9, 0));
+describe("sessionPhase", () => {
+  const w = sessionWindow("09:00", "11:00", at(9, 0));
   it.each([
     [at(8, 59), "before"],
     [at(9, 0), "running"],
@@ -34,7 +34,7 @@ describe("examPhase", () => {
     [at(10, 55), "warn5"],
     [at(11, 0), "ended"],
   ] as const)("at %s is %s", (now, phase) => {
-    expect(examPhase(w, now)).toBe(phase);
+    expect(sessionPhase(w, now)).toBe(phase);
   });
   it("reports progress", () => {
     expect(progress(w, at(10, 0))).toBeCloseTo(0.5);

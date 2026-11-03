@@ -1,8 +1,8 @@
-/** Time maths for the exam window. Pure functions, so they are easy to test. */
+/** Time maths for the session window. Pure functions, so they are easy to test. */
 
 export type Phase = "before" | "running" | "warn30" | "warn10" | "warn5" | "ended";
 
-export interface ExamWindow {
+export interface SessionWindow {
   start: Date;
   end: Date;
 }
@@ -28,10 +28,10 @@ function atTime(day: Date, hm: string): Date {
 }
 
 /**
- * The exam window for today. An end time at or before the start time means the
- * exam runs past midnight. Just after midnight, yesterday's window is used.
+ * The session window for today. An end time at or before the start time means the
+ * session runs past midnight. Just after midnight, yesterday's window is used.
  */
-export function examWindow(startHM: string, endHM: string, now: Date): ExamWindow {
+export function sessionWindow(startHM: string, endHM: string, now: Date): SessionWindow {
   const today = new Date(now);
   today.setHours(0, 0, 0, 0);
   const start = atTime(today, startHM);
@@ -46,7 +46,7 @@ export function examWindow(startHM: string, endHM: string, now: Date): ExamWindo
   return { start, end };
 }
 
-export function examPhase(win: ExamWindow, now: Date): Phase {
+export function sessionPhase(win: SessionWindow, now: Date): Phase {
   if (now < win.start) return "before";
   const left = win.end.getTime() - now.getTime();
   if (left <= 0) return "ended";
@@ -56,8 +56,8 @@ export function examPhase(win: ExamWindow, now: Date): Phase {
   return "running";
 }
 
-/** Share of the exam that has passed, from 0 to 1. */
-export function progress(win: ExamWindow, now: Date): number {
+/** Share of the session that has passed, from 0 to 1. */
+export function progress(win: SessionWindow, now: Date): number {
   const total = win.end.getTime() - win.start.getTime();
   if (total <= 0) return 0;
   return Math.min(1, Math.max(0, (now.getTime() - win.start.getTime()) / total));
@@ -103,7 +103,7 @@ export function toHM(d: Date): string {
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
-/** Exam length in minutes, allowing for exams that run past midnight. */
+/** Length in minutes, allowing for sessions that run past midnight. */
 export function durationMinutes(startHM: string, endHM: string): number {
   const a = parseHM(startHM);
   const b = parseHM(endHM);

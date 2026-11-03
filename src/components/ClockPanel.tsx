@@ -2,7 +2,7 @@ import { ProgressBar } from "@carbon/react";
 import { CheckmarkFilled, ErrorFilled, Time, WarningAltFilled, WarningFilled } from "@carbon/icons-react";
 import { useLayoutEffect, useRef } from "react";
 import type { Settings } from "../lib/settings";
-import { examPhase, examWindow, formatClock, formatClockText, formatDuration, progress, type Phase } from "../lib/time";
+import { sessionPhase, sessionWindow, formatClock, formatClockText, formatDuration, progress, type Phase } from "../lib/time";
 import "./ClockPanel.scss";
 
 const STATUS: Record<Phase, { text: string; Icon: typeof Time }> = {
@@ -15,9 +15,9 @@ const STATUS: Record<Phase, { text: string; Icon: typeof Time }> = {
 };
 
 export function ClockPanel({ settings, now }: { settings: Settings; now: Date }) {
-  const { start, end, use24h } = settings.exam;
-  const win = examWindow(start, end, now);
-  const phase = examPhase(win, now);
+  const { start, end, use24h } = settings.session;
+  const win = sessionWindow(start, end, now);
+  const phase = sessionPhase(win, now);
   const { text, Icon } = STATUS[phase];
   const clock = formatClock(now, use24h, true);
   const startText = formatClockText(win.start, use24h);
@@ -47,19 +47,19 @@ export function ClockPanel({ settings, now }: { settings: Settings; now: Date })
 
       <div>
         <h2 id="clock-label" className="erc-clock__label">
-          {phase === "before" ? "Exam begins in" : phase === "ended" ? "Exam over" : "Time remaining"}
+          {phase === "before" ? "Starts in" : phase === "ended" ? "Finished" : "Time remaining"}
         </h2>
         <div ref={bigRef} className={`erc-clock__remaining${phase === "ended" ? " is-message" : ""}`}>{big}</div>
         <p className="erc-clock__sub">
           {phase === "before" && <>Starts at <strong>{startText}</strong> · ends at <strong>{endText}</strong></>}
           {phase === "ended" && <><strong>Stop writing.</strong> Close your booklet and stay seated.</>}
-          {phase !== "before" && phase !== "ended" && <>Exam ends at <strong>{endText}</strong></>}
+          {phase !== "before" && phase !== "ended" && <>Ends at <strong>{endText}</strong></>}
         </p>
       </div>
 
       <ProgressBar
         className="erc-clock__progress"
-        label="Exam progress"
+        label="Time used"
         hideLabel
         value={Math.round(progress(win, now) * 100)}
         max={100}

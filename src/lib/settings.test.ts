@@ -9,17 +9,17 @@ describe("settings", () => {
   it("defaults are valid and use U of G fonts", () => {
     const s = defaultSettings(new Date(2026, 10, 3, 9, 20));
     expect(settingsSchema.safeParse(s).success).toBe(true);
-    expect(s.exam.start).toBe("09:00");
-    expect(s.exam.end).toBe("11:00");
+    expect(s.session.start).toBe("09:00");
+    expect(s.session.end).toBe("11:00");
     expect(s.appearance.headingFont).toBe("russo-one");
     expect(s.appearance.bodyFont).toBe("dm-sans");
   });
   it("round-trips through storage", () => {
     const store = memoryStorage();
     const s = { ...defaultSettings(), isExample: false };
-    s.exam.courseNumber = "MKTG*2000";
+    s.session.courseNumber = "MKTG*2000";
     expect(saveSettings(s, store)).toBe(true);
-    expect(loadSettings(store).exam.courseNumber).toBe("MKTG*2000");
+    expect(loadSettings(store).session.courseNumber).toBe("MKTG*2000");
   });
   it("falls back to defaults on bad data", () => {
     const store = memoryStorage();

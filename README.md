@@ -1,12 +1,12 @@
-# Exam Room Clock
+# Class Clock
 
-A projector screen for exam rooms. It shows:
+A projector screen for timed in-class work: exams, quizzes, reflections or anything else students write in a booklet. It shows:
 
-- **Exam instructions**, written in a rich text editor. They take up most of the screen and resize to fit.
+- **Instructions**, written in a rich text editor. They take up most of the screen and resize to fit.
 - **Time remaining** and the **current time**. The countdown turns yellow at 30 minutes left, orange at 10 and red at 5, then shows "Time is up".
 - **The booklet cover**: the top of the University of Guelph examination booklet, showing what students copy exactly (blue) and what they fill in themselves (orange). The Book Number line can hold a custom instruction or an attendance word.
 
-Press **S** to set up an exam and **F** for full screen. Settings are saved in the browser on the computer you set up.
+Press **S** to open setup and **F** for full screen. Settings are saved in the browser on the computer you set up.
 
 ## Built with
 
@@ -54,7 +54,7 @@ src/
     RichTextEditor.tsx       Tiptap editor with Carbon toolbar
   hooks/                     Clock tick, text fitting, wake lock, full screen, idle
   lib/
-    time.ts                  Exam window and countdown maths (tested)
+    time.ts                  Start/end window and countdown maths (tested)
     settings.ts              Settings schema, defaults, versioned storage (tested)
     sanitize.ts              Allowed formatting for instructions (tested)
     fonts.ts                 Font choices
@@ -63,8 +63,8 @@ src/
 
 ### Changing saved settings
 
-Settings are stored under `exam-room-clock:settings` with a `version` number. If you change their shape, bump `SETTINGS_VERSION` in `src/lib/settings.ts` and add a step to `migrate()` so existing setups keep working.
+Settings are stored under `class-clock:settings` with a `version` number. If you change their shape, bump `SETTINGS_VERSION` in `src/lib/settings.ts` and add a step to `migrate()` so existing setups keep working.
 
 ## Notes
 
-The university name and logo are deliberately left out. The cover header shows the course number and exam name instead.
+The university name and logo are deliberately left out. The cover header shows the course number and title instead. The cover keeps its printed title, "Examination Booklet", so it matches the booklet on the desk.

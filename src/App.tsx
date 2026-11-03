@@ -8,7 +8,7 @@ import { useNow } from "./hooks/useNow";
 import { useFullscreen, useIdle, usePrefersDark, useWakeLock } from "./hooks/useScreen";
 import { fontById } from "./lib/fonts";
 import { loadSettings, saveSettings, type Settings } from "./lib/settings";
-import { examPhase, examWindow, formatDuration } from "./lib/time";
+import { sessionPhase, sessionWindow, formatDuration } from "./lib/time";
 
 // The setup dialog (with the text editor) loads only when first opened.
 const SetupModal = lazy(() => import("./components/SetupModal").then((m) => ({ default: m.SetupModal })));
@@ -31,12 +31,12 @@ export function App() {
   }, [theme]);
 
   // Tab title doubles as a mini clock when the window isn't in front.
-  const win = examWindow(settings.exam.start, settings.exam.end, now);
-  const phase = examPhase(win, now);
+  const win = sessionWindow(settings.session.start, settings.session.end, now);
+  const phase = sessionPhase(win, now);
   useEffect(() => {
-    document.title = phase === "ended" ? "Time is up · Exam Room Clock"
-      : phase === "before" ? "Not started · Exam Room Clock"
-      : `${formatDuration(win.end.getTime() - now.getTime())} left · Exam Room Clock`;
+    document.title = phase === "ended" ? "Time is up · Class Clock"
+      : phase === "before" ? "Not started · Class Clock"
+      : `${formatDuration(win.end.getTime() - now.getTime())} left · Class Clock`;
   });
 
   const save = useCallback((next: Settings) => {
@@ -66,16 +66,16 @@ export function App() {
 
   return (
     <div className={`erc-app${idle && !setupOpen ? " is-idle" : ""}`} style={fontVars}>
-      <Header aria-label="Exam Room Clock" className="erc-header">
+      <Header aria-label="Class Clock" className="erc-header">
         <SkipToContent />
         <HeaderName prefix="" href="#main-content" onClick={(e) => e.preventDefault()}>
-          Exam Room Clock
+          Class Clock
         </HeaderName>
         {settings.isExample && (
           <Tag type="warm-gray" size="sm" className="erc-header__example">Example details</Tag>
         )}
         <HeaderGlobalBar>
-          <HeaderGlobalAction aria-label="Set up exam (S)" tooltipAlignment="end" onClick={() => setSetupOpen(true)}>
+          <HeaderGlobalAction aria-label="Set up (S)" tooltipAlignment="end" onClick={() => setSetupOpen(true)}>
             <SettingsIcon size={20} />
           </HeaderGlobalAction>
           {fullscreen.supported && (

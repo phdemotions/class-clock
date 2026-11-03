@@ -11,9 +11,9 @@ beforeAll(() => {
 describe("App", () => {
   it("shows the clock, instructions and booklet cover", () => {
     render(<App />);
-    expect(screen.getByRole("heading", { name: "Exam instructions" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Instructions" })).toBeInTheDocument();
     expect(screen.getByText("Current time")).toBeInTheDocument();
-    expect(screen.getByRole("figure", { name: /fill in the front of your examination booklet/i })).toBeInTheDocument();
+    expect(screen.getByRole("figure", { name: /fill in the front of your booklet/i })).toBeInTheDocument();
     expect(screen.getByText("Example details")).toBeInTheDocument();
   });
 

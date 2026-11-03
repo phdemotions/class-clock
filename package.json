@@ -1,9 +1,9 @@
 {
-  "name": "exam-room-clock",
+  "name": "class-clock",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Projector screen for exam rooms: countdown, current time, instructions and a guide to the booklet cover.",
+  "description": "Projector screen for timed in-class work: countdown, current time, instructions and a guide to the booklet cover.",
   "engines": {
     "node": ">=20"
   },
