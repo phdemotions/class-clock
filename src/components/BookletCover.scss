@@ -21,8 +21,8 @@
 
 .erc-booklet__page {
   position: relative;
-  inline-size: min(100cqw, calc(100cqh * 100 / 71));
-  aspect-ratio: 100 / 71;
+  inline-size: 100%;
+  block-size: calc(100cqw * 0.71);
   background: var(--paper);
   color: var(--paper-ink);
   outline: 1px solid rgb(0 0 0 / 14%);
@@ -32,76 +32,80 @@
   font-family: var(--form-font);
 }
 
+// Vertical sizes use --u, which follows the width until the cover is shorter than
+// the printed proportions; then it follows the height and the lines stretch a little
+// sideways instead. This lets the cover always span its column.
 .erc-booklet__paper {
   position: absolute;
   inset: 0;
-  container-type: inline-size;
+  container-type: size;
+  --u: min(1cqw, 1cqh * 100 / 71);
 
   > * { position: absolute; }
 }
 
 .erc-booklet__header {
-  border-block-start: 0.35cqw solid var(--paper-ink);
-  border-block-end: 0.18cqw solid var(--paper-ink);
-  padding-block: 0.8cqw 0.9cqw;
+  border-block-start: calc(0.35 * var(--u)) solid var(--paper-ink);
+  border-block-end: calc(0.18 * var(--u)) solid var(--paper-ink);
+  padding-block: calc(0.8 * var(--u)) calc(0.9 * var(--u));
 }
 .erc-booklet__course {
   font-family: "Russo One", var(--form-font);
-  font-size: 5cqw;
+  font-size: calc(5 * var(--u));
   line-height: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .erc-booklet__exam-name {
-  margin-block-start: 0.6cqw;
-  font-size: 1.9cqw;
+  margin-block-start: calc(0.6 * var(--u));
+  font-size: calc(1.9 * var(--u));
   letter-spacing: 0.04em;
   text-transform: uppercase;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.erc-booklet__title { font-weight: 700; font-size: 3.35cqw; }
+.erc-booklet__title { font-weight: 700; font-size: calc(3.35 * var(--u)); }
 
 .erc-booklet__line {
-  block-size: 4.6cqw;
-  border-block-end: 0.14cqw solid var(--paper-ink);
+  block-size: calc(4.6 * var(--u));
+  border-block-end: calc(0.14 * var(--u)) solid var(--paper-ink);
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
-  padding-inline: 0.6cqw;
+  padding-inline: calc(0.6 * var(--u));
   box-sizing: border-box;
   &.is-center { justify-content: center; }
 }
 
 .erc-booklet__label {
   position: absolute;
-  inset-block-start: calc(100% + 0.45cqw);
+  inset-block-start: calc(100% + calc(0.45 * var(--u)));
   inset-inline-start: 0;
-  font-size: 1.7cqw;
+  font-size: calc(1.7 * var(--u));
   white-space: nowrap;
   .is-center > & { inset-inline-start: 50%; transform: translateX(-50%); }
 }
 .erc-booklet__label--free { position: absolute; }
-.erc-booklet__side-label { font-weight: 700; font-size: 1.7cqw; white-space: nowrap; }
+.erc-booklet__side-label { font-weight: 700; font-size: calc(1.7 * var(--u)); white-space: nowrap; }
 
 .erc-booklet__pen {
   font-family: var(--hand-font);
   font-weight: 700;
   color: var(--pen);
-  font-size: 3.3cqw;
+  font-size: calc(3.3 * var(--u));
   line-height: 1;
-  padding-block-end: 0.35cqw;
-  &.is-long { font-size: 2.5cqw; }
+  padding-block-end: calc(0.35 * var(--u));
+  &.is-long { font-size: calc(2.5 * var(--u)); }
 }
 .erc-booklet__note {
   font-style: italic;
   color: var(--note);
-  font-size: 2.05cqw;
+  font-size: calc(2.05 * var(--u));
   line-height: 1.1;
-  padding-block-end: 0.55cqw;
-  &.is-long { font-size: 1.6cqw; }
+  padding-block-end: calc(0.55 * var(--u));
+  &.is-long { font-size: calc(1.6 * var(--u)); }
 }
 .erc-booklet__line > .erc-booklet__pen,
 .erc-booklet__line > .erc-booklet__note {
@@ -118,7 +122,7 @@
   line-clamp: 2;
   text-wrap: balance;
 }
-.erc-booklet__line:not(.is-center) { padding-inline-start: 1.2cqw; }
+.erc-booklet__line:not(.is-center) { padding-inline-start: calc(1.2 * var(--u)); }
 .erc-booklet__id-note {
   position: absolute;
   inset: 0;
@@ -126,33 +130,33 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  font-size: 1.6cqw;
+  font-size: calc(1.6 * var(--u));
   white-space: nowrap;
   pointer-events: none;
   > span:last-child, &::before { position: static; }
 }
 // Sits on the boxes like a sticky label, so the box lines don't strike through it.
-.erc-booklet__id-note-text { background: var(--paper); padding: 0.2cqw 0.8cqw; position: static; }
+.erc-booklet__id-note-text { background: var(--paper); padding: calc(0.2 * var(--u)) calc(0.8 * var(--u)); position: static; }
 
 .erc-booklet__id-boxes {
-  block-size: 2.9cqw;
-  border-block-end: 0.14cqw solid var(--paper-ink);
+  block-size: calc(2.9 * var(--u));
+  border-block-end: calc(0.14 * var(--u)) solid var(--paper-ink);
   display: grid;
   grid-template-columns: repeat(9, 1fr);
-  > span[aria-hidden] { position: static; border-inline-start: 0.14cqw solid var(--paper-ink); }
-  > span[aria-hidden]:nth-child(9) { border-inline-end: 0.14cqw solid var(--paper-ink); }
+  > span[aria-hidden] { position: static; border-inline-start: calc(0.14 * var(--u)) solid var(--paper-ink); }
+  > span[aria-hidden]:nth-child(9) { border-inline-end: calc(0.14 * var(--u)) solid var(--paper-ink); }
 }
 
 .erc-booklet__key {
   display: flex;
   flex-wrap: wrap;
-  gap: 3.5cqw;
-  font-size: 1.75cqw;
-  border-block-start: 0.14cqw dashed rgb(27 29 33 / 35%);
-  padding-block-start: 1.1cqw;
+  gap: calc(3.5 * var(--u));
+  font-size: calc(1.75 * var(--u));
+  border-block-start: calc(0.14 * var(--u)) dashed rgb(27 29 33 / 35%);
+  padding-block-start: calc(1.1 * var(--u));
   > span { position: static; }
-  .erc-booklet__pen { font-size: 2.3cqw; padding: 0; }
-  .erc-booklet__note { font-size: 1.75cqw; padding: 0; }
+  .erc-booklet__pen { font-size: calc(2.3 * var(--u)); padding: 0; }
+  .erc-booklet__note { font-size: calc(1.75 * var(--u)); padding: 0; }
 }
 
 // Outside the one-screen layout the cover takes the full column width and sets its own height.
@@ -165,6 +169,7 @@
 // and then it stays on the column's left edge.
 @include stage {
   .erc-booklet { block-size: auto; }
-  // At most about half the column's height (header, margins and gutter are 9rem in total).
-  .erc-booklet__page { inline-size: 100%; max-inline-size: calc((100dvh - 9rem) * 0.52 * 100 / 71); }
+  // Up to the printed proportions, but no more than 45% of the screen's content height,
+  // so the countdown keeps its size on short screens.
+  .erc-booklet__page { block-size: max(55cqw, min(71cqw, (100dvh - 9rem) * 0.45)); }
 }

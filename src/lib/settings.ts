@@ -70,7 +70,7 @@ export function defaultSettings(now = new Date()): Settings {
       end: toHM(end),
       use24h: false,
     },
-    booklet: { bookNumberText: "1 on your first booklet, 2 on your second", bookNumberStyle: "instruction" },
+    booklet: { bookNumberText: "1, or 2 on an extra booklet", bookNumberStyle: "instruction" },
     instructionsHtml: EXAMPLE_INSTRUCTIONS,
     appearance: { theme: "dark", headingFont: UOFG_FONTS.heading, bodyFont: UOFG_FONTS.body, clockFont: UOFG_FONTS.clock },
   };

@@ -32,20 +32,25 @@ export function ClockPanel({ settings, now }: { settings: Settings; now: Date })
 
   const digitWidth = useDigitWidth(fontById(settings.appearance.clockFont).stack);
 
-  // Shrink the big number if it would run past the panel (wide fonts, narrow screens).
+  // Start from the CSS size, then shrink the big number until it fits the panel's
+  // width and height (wide fonts, short or narrow screens).
+  const bodyRef = useRef<HTMLDivElement>(null);
   const bigRef = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
     const el = bigRef.current;
-    if (!el) return;
+    const body = bodyRef.current;
+    if (!el || !body) return;
     const fit = () => {
       el.style.removeProperty("font-size");
-      for (let i = 0; i < 40 && el.scrollWidth > el.clientWidth + 1; i++) {
+      // On one-screen layouts the body has a fixed height; elsewhere it grows and never overflows.
+      const tooBig = () => el.scrollWidth > el.clientWidth + 1 || body.scrollHeight > body.clientHeight + 1;
+      for (let i = 0; i < 40 && tooBig(); i++) {
         el.style.fontSize = `${parseFloat(getComputedStyle(el).fontSize) * 0.95}px`;
       }
     };
     fit();
     const observer = new ResizeObserver(fit);
-    observer.observe(el);
+    observer.observe(body);
     return () => observer.disconnect();
   }, [big.length, digitWidth, settings.appearance.clockFont]);
 
@@ -63,7 +68,7 @@ export function ClockPanel({ settings, now }: { settings: Settings; now: Date })
         </p>
       </header>
 
-      <div className="erc-clock__body">
+      <div ref={bodyRef} className="erc-clock__body">
         <div ref={bigRef} className={`erc-clock__remaining${phase === "ended" ? " is-message" : ""}`}>
           {phase === "ended" ? <span>{big}</span> : <Digits text={big} />}
         </div>

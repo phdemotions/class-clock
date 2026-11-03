@@ -7,6 +7,7 @@
 // The clock panel takes the height left above the booklet, and its numbers scale to it.
 .erc-clock {
   --erc-state: #{$support-success};
+  --erc-ends-h: clamp(2.75rem, 9cqw, 4rem);
   container-type: inline-size;
   @include stage { container-type: size; overflow: hidden; }
 
@@ -55,9 +56,10 @@
   line-height: 0.9;
   letter-spacing: -0.01em;
   font-size: min(27cqw, 14vh);
-  @include stage { font-size: min(27cqw, 26cqh); }
+  @include stage { font-size: min(27cqw, 34cqh); }
   // Fixed height in every state, so "Time is up" doesn't change the panel's size.
   block-size: 0.95em;
+  flex: none;
   display: flex;
   align-items: center;
   margin-inline-start: -0.04em; // optical alignment: digit side bearing
@@ -91,16 +93,17 @@
   justify-content: space-between;
   align-items: baseline;
   gap: $spacing-05;
-  min-block-size: 2.6em;
+  // Same fixed height for this row and the closing message that replaces it, so nothing moves.
+  block-size: var(--erc-ends-h);
+  overflow: hidden;
   margin-block-start: $spacing-04;
-  @container (max-height: 26rem) { min-block-size: 1.5em; margin-block-start: $spacing-03; }
   font-family: var(--erc-font-body);
   font-variant-numeric: tabular-nums;
   font-size: clamp(1rem, 3.4cqw, 1.5rem);
   color: $text-secondary;
 }
 .erc-clock__message {
-  align-items: center;
+  align-items: flex-start;
   font-size: clamp(1rem, 3.8cqw, 1.625rem);
   line-height: 1.25;
   color: $text-primary;
@@ -152,10 +155,11 @@
 // Light theme: dark text fails contrast on the red pill, so use white there.
 :root[data-carbon-theme="white"] .erc-clock:is(.is-warn5, .is-ended) .erc-clock__status { color: #ffffff; }
 
-// Short screens (e.g. 1280x720): tighter spacing so the countdown keeps its size.
-@container (max-height: 26rem) {
-  .erc-clock .erc-panel__header { padding-block-end: $spacing-03; margin-block-end: $spacing-03; }
-  .erc-clock__body { gap: $spacing-04; }
+// Short screens (e.g. 1280x720): tighter spacing inside the panel body only. The header
+// keeps the shared spacing so its divider stays level with the instructions header.
+@container (max-height: 22rem) {
+  .erc-clock { --erc-ends-h: 1.75rem; }
+  .erc-clock__body { gap: $spacing-03; }
+  .erc-clock__ends { margin-block-start: $spacing-03; }
   .erc-clock__now { margin-block-start: $spacing-03; padding-block-start: $spacing-03; }
-  .erc-clock__message { font-size: 0.875rem; }
 }
