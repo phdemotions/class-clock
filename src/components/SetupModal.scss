@@ -15,7 +15,7 @@
   .cds--time-picker__select { flex: 0 0 5.5rem; inline-size: 5.5rem; }
   .cds--time-picker__select .cds--select-input { inline-size: 100%; }
   // Same height on every tab, so the dialog doesn't jump while switching.
-  .cds--tab-content { min-block-size: 32rem; }
+  .cds--tab-content { min-block-size: 35rem; }
   // Mouse clicks on tabs don't leave a focus ring; keyboard focus still shows one.
   .cds--tabs__nav-item:focus:not(:focus-visible) { outline: none; box-shadow: none; }
 }
@@ -43,9 +43,10 @@
   .cds--form__helper-text { margin: 0; flex: 1 1 16rem; max-inline-size: 40rem; }
 }
 .erc-setup__narrow { max-inline-size: 28rem; }
-.erc-setup__danger {
+.erc-setup .erc-setup__danger {
   padding-block-start: $spacing-06;
-  > .cds--btn { min-inline-size: 13rem; }
+  // Ghost button: pull its text back onto the content edge.
+  > .cds--btn--danger--ghost { margin-inline-start: -$spacing-05; }
   border-block-start: 1px solid $border-subtle-01;
   .cds--inline-notification { max-inline-size: none; }
 }

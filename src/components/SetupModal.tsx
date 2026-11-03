@@ -198,7 +198,7 @@ function SetupForm({ settings, onClose, onSave }: Props) {
                     </div>
                   </Stack>
                 ) : (
-                  <Button kind="danger--tertiary" size="md" onClick={() => setConfirmReset(true)}>Reset to example…</Button>
+                  <Button kind="danger--ghost" size="md" onClick={() => setConfirmReset(true)}>Reset to example…</Button>
                 )}
               </div>
             </Stack>

@@ -172,4 +172,8 @@
   // Up to the printed proportions, but no more than 45% of the screen's content height,
   // so the countdown keeps its size on short screens.
   .erc-booklet__page { block-size: max(55cqw, min(71cqw, (100dvh - 9rem) * 0.45)); }
+  // Taller screens have room to spare: give the cover up to half the height.
+  @media (min-height: 62.5rem) {
+    .erc-booklet__page { block-size: max(55cqw, min(71cqw, (100dvh - 9rem) * 0.47)); }
+  }
 }
