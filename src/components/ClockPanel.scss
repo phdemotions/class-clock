@@ -1,0 +1,87 @@
+@use "@carbon/react/scss/theme" as *;
+@use "@carbon/react/scss/spacing" as *;
+@use "@carbon/react/scss/type" as *;
+
+.erc-clock {
+  --erc-state: #{$text-primary};
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: clamp($spacing-03, 2vh, $spacing-07);
+  min-inline-size: 0;
+
+  &.is-before { --erc-state: #{$text-secondary}; }
+  &.is-running { --erc-state: #{$support-success}; }
+  &.is-warn30 { --erc-state: #{$support-caution-minor}; }
+  &.is-warn10 { --erc-state: #{$support-caution-major}; }
+  &.is-warn5,
+  &.is-ended { --erc-state: #{$support-error}; }
+}
+
+.erc-clock__status {
+  @include type-style("heading-compact-02");
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-03;
+  color: var(--erc-state);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.erc-clock__label {
+  @include type-style("label-02");
+  color: $text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-block-end: $spacing-02;
+}
+
+.erc-clock__remaining {
+  font-family: var(--erc-font-clock);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 0.95;
+  font-size: min(24cqw, 15vh);
+  white-space: nowrap;
+  overflow: hidden;
+  color: $text-primary;
+  transition: color 400ms;
+
+  .is-warn30 &, .is-warn10 &, .is-warn5 &, .is-ended & { color: var(--erc-state); }
+  .is-warn5 & { animation: erc-pulse 2s ease-in-out infinite; }
+  &.is-message { font-size: min(16cqw, 11vh); }
+}
+
+.erc-clock__sub {
+  @include type-style("body-02");
+  font-size: clamp(1rem, 3.6cqw, 1.5rem);
+  color: $text-secondary;
+  margin-block-start: $spacing-03;
+  strong { color: $text-primary; font-weight: 600; }
+}
+
+.erc-clock__progress {
+  .cds--progress-bar__bar { background-color: var(--erc-state); }
+  .cds--progress-bar__helper-text { font-variant-numeric: tabular-nums; }
+}
+
+.erc-clock__now p {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: $spacing-04;
+}
+.erc-clock__time {
+  font-family: var(--erc-font-clock);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  font-size: min(11cqw, 7vh);
+  line-height: 1;
+}
+.erc-clock__period { font-size: 0.45em; color: $text-secondary; margin-inline-start: 0.15em; }
+.erc-clock__date { @include type-style("body-02"); color: $text-secondary; }
+
+@keyframes erc-pulse { 50% { opacity: 0.55; } }
+@media (prefers-reduced-motion: reduce) {
+  .erc-clock__remaining { animation: none !important; transition: none; }
+}

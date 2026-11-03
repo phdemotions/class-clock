@@ -1,0 +1,44 @@
+@use "@carbon/react/scss/theme" as *;
+@use "@carbon/react/scss/spacing" as *;
+
+.erc-editor {
+  border: 1px solid $border-strong-01;
+  background: $field-01;
+  &:focus-within { outline: 2px solid $focus; outline-offset: -2px; }
+}
+
+.erc-editor__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $spacing-02;
+  padding: $spacing-02;
+  border-block-end: 1px solid $border-subtle-01;
+  background: $layer-02;
+
+  .cds--form-item, .cds--select { flex: none; inline-size: auto; }
+  .cds--select-input__wrapper { inline-size: auto; }
+  .cds--select--inline .cds--select-input { inline-size: auto; padding-inline-end: $spacing-07; }
+}
+
+.erc-editor__sep { inline-size: 1px; align-self: stretch; background: $border-subtle-01; margin-inline: $spacing-02; }
+
+.erc-editor__colors { display: flex; gap: $spacing-02; }
+.erc-editor__swatch {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border: 1px solid $border-strong-01;
+  background: linear-gradient(135deg, $text-primary 50%, $background 50%);
+  cursor: pointer;
+  &.is-selected { outline: 2px solid $focus; outline-offset: 1px; }
+  &:focus-visible { outline: 2px solid $focus; outline-offset: 1px; }
+}
+
+.erc-editor__content {
+  min-block-size: 16rem;
+  max-block-size: 45vh;
+  overflow: auto;
+  padding: $spacing-05;
+  font-size: 1.125rem;
+  outline: none;
+}

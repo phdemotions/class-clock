@@ -1,0 +1,22 @@
+@use "@carbon/react/scss/theme" as *;
+@use "@carbon/react/scss/spacing" as *;
+@use "@carbon/react/scss/type" as *;
+@use "@carbon/react/scss/breakpoint" as *;
+
+.erc-setup {
+  .cds--tab-content { padding-block: $spacing-06 0; padding-inline: 0; }
+  .cds--modal-content { margin-block-end: $spacing-07; }
+}
+.erc-setup__intro, .erc-setup__help { @include type-style("helper-text-02"); color: $text-secondary; }
+.erc-setup__intro { margin-block-end: $spacing-05; }
+.erc-setup__help { margin-block-start: $spacing-03; }
+
+.erc-setup__grid {
+  display: grid;
+  gap: $spacing-06;
+  grid-template-columns: 1fr;
+  @include breakpoint(md) { grid-template-columns: 1fr 1fr; }
+  &--3 { @include breakpoint(lg) { grid-template-columns: repeat(3, 1fr); } }
+}
+.erc-setup__full { @include breakpoint(md) { grid-column: 1 / -1; } }
+.erc-setup__quick { display: flex; flex-wrap: wrap; align-items: center; gap: $spacing-03; .cds--label { margin: 0 $spacing-03 0 0; } }

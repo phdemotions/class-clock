@@ -1,0 +1,89 @@
+// Carbon is loaded per component rather than all at once, to keep the CSS small.
+// IBM Plex is bundled through Fontsource instead of Carbon's font loader.
+// $css--default-type is off so Carbon does not fix paragraph and heading sizes; the instructions panel scales its own text.
+@use "@carbon/react/scss/config" with ($css--font-face: false, $css--default-type: false);
+@use "@carbon/react/scss/reset";
+@use "@carbon/react/scss/grid";
+@use "@carbon/react/scss/layer";
+@use "@carbon/react/scss/layout";
+@use "@carbon/react/scss/themes";
+@use "@carbon/react/scss/theme";
+@use "@carbon/react/scss/spacing" as *;
+@use "@carbon/react/scss/breakpoint" as *;
+@use "@carbon/react/scss/components/button";
+@use "@carbon/react/scss/components/content-switcher";
+@use "@carbon/react/scss/components/form";
+@use "@carbon/react/scss/components/modal";
+@use "@carbon/react/scss/components/progress-bar";
+@use "@carbon/react/scss/components/radio-button";
+@use "@carbon/react/scss/components/select";
+@use "@carbon/react/scss/components/stack";
+@use "@carbon/react/scss/components/tabs";
+@use "@carbon/react/scss/components/tag";
+@use "@carbon/react/scss/components/text-input";
+@use "@carbon/react/scss/components/toggle";
+@use "@carbon/react/scss/components/tooltip";
+@use "@carbon/react/scss/components/popover";
+@use "@carbon/react/scss/components/ui-shell";
+
+@use "@carbon/react/scss/colors";
+
+// Gray 100 (dark) is the default; White when the light theme is chosen.
+// The --erc-ink-* colours are for coloured instruction text.
+:root {
+  @include theme.theme(themes.$g100);
+  --erc-ink-yellow: #{colors.$yellow-30};
+  --erc-ink-red: #{colors.$red-40};
+  --erc-ink-green: #{colors.$green-40};
+  --erc-ink-blue: #{colors.$blue-40};
+  --erc-ink-purple: #{colors.$purple-40};
+}
+:root[data-carbon-theme="white"] {
+  @include theme.theme(themes.$white);
+  --erc-ink-yellow: #{colors.$yellow-60};
+  --erc-ink-red: #{colors.$red-60};
+  --erc-ink-green: #{colors.$green-60};
+  --erc-ink-blue: #{colors.$blue-60};
+  --erc-ink-purple: #{colors.$purple-60};
+}
+
+html, body, #root { block-size: 100%; }
+body {
+  background: theme.$background;
+  color: theme.$text-primary;
+  font-family: var(--erc-font-body, "IBM Plex Sans", Arial, sans-serif);
+}
+
+.erc-app { min-block-size: 100%; font-family: var(--erc-font-body); }
+
+.erc-header {
+  transition: opacity 600ms;
+  .erc-app.is-idle & { opacity: 0.25; }
+}
+.erc-header__example { align-self: center; margin-inline-start: $spacing-03; }
+
+// Below the 3rem Carbon header. On large screens everything fits one screen with no scrolling.
+.erc-main {
+  padding-block: calc(3rem + #{$spacing-05}) $spacing-05;
+  padding-inline: max(0px, env(safe-area-inset-left, 0px)) max(0px, env(safe-area-inset-right, 0px));
+  @include breakpoint(lg) { block-size: 100dvh; box-sizing: border-box; }
+}
+
+.erc-grid {
+  row-gap: $spacing-07;
+  @include breakpoint(lg) { block-size: 100%; }
+}
+
+.erc-col { min-inline-size: 0; }
+@include breakpoint(lg) {
+  .erc-col { block-size: 100%; min-block-size: 0; }
+  .erc-col--side {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: $spacing-06;
+  }
+}
+@include breakpoint-down(lg) {
+  .erc-col--side { display: flex; flex-direction: column; gap: $spacing-07; }
+  .erc-col--side { order: -1; }
+}

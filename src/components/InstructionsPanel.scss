@@ -1,0 +1,82 @@
+@use "@carbon/react/scss/theme" as *;
+@use "@carbon/react/scss/spacing" as *;
+@use "@carbon/react/scss/type" as *;
+
+.erc-instructions {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  min-block-size: 0;
+  background: $layer-01;
+  border: 1px solid $border-subtle-01;
+  padding: clamp($spacing-05, 3vh, $spacing-09) clamp($spacing-05, 2.6vw, $spacing-10);
+}
+
+.erc-instructions__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: $spacing-03 $spacing-05;
+  padding-block-end: $spacing-05;
+  border-block-end: 1px solid $border-subtle-01;
+
+  h1 {
+    font-family: var(--erc-font-heading);
+    font-weight: 400;
+    font-size: clamp(1.5rem, 2.4vw, 2.75rem);
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+  p {
+    @include type-style("body-02");
+    font-family: var(--erc-font-body);
+    color: $text-secondary;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.erc-instructions__box {
+  flex: 1;
+  min-block-size: 0;
+  overflow: hidden;
+  padding-block-start: clamp($spacing-05, 2vh, $spacing-07);
+
+  @media (max-width: 65.99rem) { overflow: visible; }
+}
+
+.erc-instructions__empty { @include type-style("body-02"); color: $text-secondary; }
+
+/* Shared formatting for the on-screen instructions and the editor. Sizes are in em so the panel can scale them. */
+.erc-rich {
+  font-family: var(--erc-font-body);
+  font-size: 2rem;
+  line-height: 1.3;
+  color: $text-primary;
+  overflow-wrap: anywhere;
+
+  @media (max-width: 65.99rem) { font-size: 1.25rem; }
+
+  > :first-child { margin-block-start: 0; }
+  > :last-child { margin-block-end: 0; }
+  p { margin-block: 0 0.55em; }
+  li > p { margin: 0; }
+  h2, h3 { font-family: var(--erc-font-heading); font-weight: 400; text-wrap: balance; }
+  h2 { font-size: 1.45em; line-height: 1.1; margin-block: 0.7em 0.35em; }
+  h3 {
+    font-size: 1em;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: $text-secondary;
+    margin-block: 0.9em 0.3em;
+  }
+  ul, ol { margin-block: 0 0.55em; padding-inline-start: 1.3em; }
+  ul { list-style: disc; }
+  ol { list-style: decimal; }
+  li { margin-block-end: 0.3em; padding-inline-start: 0.15em; }
+  li::marker { color: $text-secondary; }
+  strong, b { font-weight: 700; }
+  em, i { font-style: italic; }
+  u { text-decoration: underline; }
+  s { text-decoration: line-through; }
+}
