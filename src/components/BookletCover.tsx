@@ -62,7 +62,6 @@ function InkText({ ink, width }: { ink: Ink; width: number }): ReactNode {
 export function BookletCover({ settings }: { settings: Settings }) {
   const { session } = settings;
   return (
-    <div className="erc-booklet-tile">
     <figure className="erc-booklet" aria-labelledby="booklet-caption">
       <figcaption id="booklet-caption" className="cds--visually-hidden">
         How to fill in the front of your booklet
@@ -94,7 +93,7 @@ export function BookletCover({ settings }: { settings: Settings }) {
               <span key={i} aria-hidden="true" />
             ))}
             <span className="erc-booklet__note erc-booklet__id-note">
-              <span className="erc-booklet__id-note-text"><span aria-hidden="true">✎ </span>your student ID, one digit per box</span>
+              <span className="erc-booklet__id-note-text"><span aria-hidden="true">✎ </span>your student ID</span>
             </span>
           </div>
           <span className="erc-booklet__label erc-booklet__label--free" style={pos(3.6, 35.6)}>I.D. Number</span>
@@ -110,6 +109,5 @@ export function BookletCover({ settings }: { settings: Settings }) {
         </div>
       </div>
     </figure>
-    </div>
   );
 }

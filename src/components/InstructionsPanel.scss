@@ -7,7 +7,12 @@
 
 .erc-instructions { @include stage { block-size: 100%; } }
 
+.erc-instructions .erc-panel__header > .erc-panel__title { flex: 0 1 auto; max-inline-size: 70%; }
 .erc-instructions__course {
+  flex: 0 1 auto !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   @include type-style("body-02");
   font-family: var(--erc-font-body);
   font-size: clamp(1rem, 1.1vw, 1.375rem);
@@ -36,6 +41,7 @@
   @include stage { font-size: 2rem; }
 
   > :first-child { margin-block-start: 0; }
+  > * + * { padding-block-start: var(--erc-extra, 0px); }
   > :last-child { margin-block-end: 0; }
   p { margin-block: 0 0.55em; }
   li > p { margin: 0; }

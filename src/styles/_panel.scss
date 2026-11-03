@@ -2,6 +2,7 @@
 // header height and divider, so their edges and header rules line up across columns.
 @use "@carbon/react/scss/theme" as *;
 @use "@carbon/react/scss/spacing" as *;
+@use "./stage" as *;
 
 .erc-panel {
   display: flex;
@@ -13,13 +14,19 @@
   padding: var(--erc-pad-y) var(--erc-pad-x);
 }
 
+// Both panel headers have the same fixed height, so their dividers line up across columns.
 .erc-panel__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
   gap: $spacing-03 $spacing-05;
-  min-block-size: var(--erc-panel-head, 3rem);
+  // Small screens wrap instead of cutting text; the one-screen layout uses a fixed height.
+  flex-wrap: wrap;
+  min-block-size: var(--erc-panel-head);
+  @include stage { flex-wrap: nowrap; block-size: var(--erc-panel-head); }
+  box-sizing: content-box;
+  > * { min-inline-size: 0; }
+  > :last-child { flex: none; }
   padding-block-end: var(--erc-pad-y);
   margin-block-end: var(--erc-pad-y);
   border-block-end: 1px solid $border-subtle-01;
@@ -32,5 +39,7 @@
   font-size: var(--erc-panel-title, clamp(1.5rem, 2.1vw, 2.5rem));
   line-height: 1.1;
   color: $text-primary;
-  text-wrap: balance;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

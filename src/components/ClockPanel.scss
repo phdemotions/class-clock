@@ -2,10 +2,13 @@
 @use "@carbon/react/scss/spacing" as *;
 @use "@carbon/react/scss/type" as *;
 @use "../styles/panel";
+@use "../styles/stage" as *;
 
+// The clock panel takes the height left above the booklet, and its numbers scale to it.
 .erc-clock {
   --erc-state: #{$support-success};
   container-type: inline-size;
+  @include stage { container-type: size; overflow: hidden; }
 
   &.is-before { --erc-state: #{$text-secondary}; }
   &.is-warn30 { --erc-state: #{$support-caution-minor}; }
@@ -38,7 +41,12 @@
   }
 }
 
-.erc-clock__body { display: flex; flex-direction: column; gap: clamp(#{$spacing-05}, 2.4vh, #{$spacing-07}); }
+.erc-clock__body {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(#{$spacing-05}, 2.4vh, #{$spacing-07});
+  @include stage { flex: 1; justify-content: center; min-block-size: 0; }
+}
 
 .erc-clock__remaining {
   font-family: var(--erc-font-clock);
@@ -47,6 +55,11 @@
   line-height: 0.9;
   letter-spacing: -0.01em;
   font-size: min(27cqw, 14vh);
+  @include stage { font-size: min(27cqw, 26cqh); }
+  // Fixed height in every state, so "Time is up" doesn't change the panel's size.
+  block-size: 0.95em;
+  display: flex;
+  align-items: center;
   margin-inline-start: -0.04em; // optical alignment: digit side bearing
   white-space: nowrap;
   overflow: hidden;
@@ -54,15 +67,7 @@
   transition: color 400ms;
 
   .is-warn30 &, .is-warn10 &, .is-warn5 &, .is-ended & { color: var(--erc-state); }
-  &.is-message { font-size: min(17cqw, 11vh); letter-spacing: -0.01em; }
-}
-
-.erc-clock__message {
-  font-family: var(--erc-font-body);
-  font-size: clamp(1rem, 4.2cqw, 1.75rem);
-  line-height: 1.3;
-  color: $text-primary;
-  strong { font-weight: 700; }
+  &.is-message > span { font-size: 0.64em; letter-spacing: -0.01em; }
 }
 
 .erc-clock__bar {
@@ -86,11 +91,20 @@
   justify-content: space-between;
   align-items: baseline;
   gap: $spacing-05;
+  min-block-size: 2.6em;
   margin-block-start: $spacing-04;
+  @container (max-height: 26rem) { min-block-size: 1.5em; margin-block-start: $spacing-03; }
   font-family: var(--erc-font-body);
   font-variant-numeric: tabular-nums;
-  font-size: clamp(0.875rem, 3cqw, 1.25rem);
+  font-size: clamp(1rem, 3.4cqw, 1.5rem);
   color: $text-secondary;
+}
+.erc-clock__message {
+  align-items: center;
+  font-size: clamp(1rem, 3.8cqw, 1.625rem);
+  line-height: 1.25;
+  color: $text-primary;
+  strong { font-weight: 700; }
 }
 .erc-clock__end {
   font-size: clamp(1.125rem, 4.6cqw, 2rem);
@@ -98,38 +112,30 @@
   strong { font-weight: 700; }
 }
 
+// Current time and date share one baseline row, below a divider.
 .erc-clock__now {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: $spacing-03 $spacing-05;
   margin-block-start: var(--erc-pad-y);
   padding-block-start: var(--erc-pad-y);
   border-block-start: 1px solid $border-subtle-01;
 }
-.erc-clock__now-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: $spacing-05;
-  flex-wrap: wrap;
-  margin-block-end: $spacing-03;
-}
-.erc-clock__label {
-  @include type-style("label-02");
-  color: $text-secondary;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-}
 .erc-clock__date {
   font-family: var(--erc-font-body);
-  font-size: clamp(0.875rem, 3cqw, 1.25rem);
+  font-size: clamp(1rem, 3.4cqw, 1.5rem);
   color: $text-secondary;
 }
 .erc-clock__time {
-  display: block;
   font-family: var(--erc-font-clock);
   font-weight: 500;
   color: $text-secondary;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.01em;
-  font-size: min(12cqw, 6.5vh);
+  font-size: min(11cqw, 6.5vh);
+  @include stage { font-size: min(11cqw, 10cqh); }
   line-height: 1;
   margin-inline-start: -0.03em;
 }
@@ -145,3 +151,11 @@
 
 // Light theme: dark text fails contrast on the red pill, so use white there.
 :root[data-carbon-theme="white"] .erc-clock:is(.is-warn5, .is-ended) .erc-clock__status { color: #ffffff; }
+
+// Short screens (e.g. 1280x720): tighter spacing so the countdown keeps its size.
+@container (max-height: 26rem) {
+  .erc-clock .erc-panel__header { padding-block-end: $spacing-03; margin-block-end: $spacing-03; }
+  .erc-clock__body { gap: $spacing-04; }
+  .erc-clock__now { margin-block-start: $spacing-03; padding-block-start: $spacing-03; }
+  .erc-clock__message { font-size: 0.875rem; }
+}

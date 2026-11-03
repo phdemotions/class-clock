@@ -74,6 +74,7 @@ function SetupForm({ settings, onClose, onSave }: Props) {
       onRequestSubmit={save}
       preventCloseOnClickOutside
       className="erc-setup"
+      selectorPrimaryFocus=".ProseMirror"
     >
       <p className="erc-setup__intro">Saved in this browser only, so set up on the computer connected to the projector.</p>
       <Tabs>
@@ -97,7 +98,7 @@ function SetupForm({ settings, onClose, onSave }: Props) {
               <TextInput id="erc-title" labelText="Title" maxLength={80}
                 helperText="Shown above the instructions and on the cover, e.g. Final Examination, Quiz 2 or Reflection 3"
                 value={draft.session.title} onChange={(e) => set("session", { title: e.target.value })} />
-              <FormGroup legendText="Copied by students exactly (blue on the cover)">
+              <FormGroup className="erc-setup__group" legendText="Copied exactly by students (blue on the cover)">
                 <div className="erc-setup__grid">
                   <TextInput id="erc-course" labelText="Course number" placeholder="PSYC*3250" maxLength={40}
                     value={draft.session.courseNumber} onChange={(e) => set("session", { courseNumber: e.target.value })} />
@@ -109,7 +110,7 @@ function SetupForm({ settings, onClose, onSave }: Props) {
                     value={draft.session.dateText} onChange={(e) => set("session", { dateText: e.target.value })} />
                 </div>
               </FormGroup>
-              <FormGroup legendText="Book Number line">
+              <FormGroup className="erc-setup__group" legendText="Book Number line">
                 <Stack gap={5}>
                   <TextInput id="erc-book" labelText="Text on the line" maxLength={60}
                     helperText="An instruction, or a word such as MAPLE to check attendance"
@@ -159,7 +160,7 @@ function SetupForm({ settings, onClose, onSave }: Props) {
           <TabPanel>
             <Stack gap={7}>
               <div className="erc-setup__narrow">
-                <p className="cds--label" id="erc-theme-label">Theme</p>
+                <p className="erc-setup__heading" id="erc-theme-label">Theme</p>
                 <ContentSwitcher
                   size="md"
                   aria-labelledby="erc-theme-label"
@@ -170,7 +171,7 @@ function SetupForm({ settings, onClose, onSave }: Props) {
                 </ContentSwitcher>
                 <p className="cds--form__helper-text">Dark reduces projector glare. Light suits very bright rooms.</p>
               </div>
-              <FormGroup legendText="Fonts">
+              <FormGroup className="erc-setup__group" legendText="Fonts">
                 <Stack gap={5}>
                   <div className="erc-setup__grid erc-setup__grid--3">
                     {fontSelect("erc-font-heading", "Headings", draft.appearance.headingFont, (v) => set("appearance", { headingFont: v }))}
@@ -197,7 +198,7 @@ function SetupForm({ settings, onClose, onSave }: Props) {
                     </div>
                   </Stack>
                 ) : (
-                  <Button kind="danger--ghost" size="md" onClick={() => setConfirmReset(true)}>Reset to example…</Button>
+                  <Button kind="danger--tertiary" size="md" onClick={() => setConfirmReset(true)}>Reset to example…</Button>
                 )}
               </div>
             </Stack>

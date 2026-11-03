@@ -8,8 +8,22 @@
   .cds--tabs { margin-inline: -$spacing-05; inline-size: calc(100% + #{2 * $spacing-05}); }
   .cds--tabs .cds--tab--list { padding-inline: $spacing-05; }
   .cds--fieldset { margin-block-end: 0; }
-  .cds--time-picker, .cds--time-picker__input { inline-size: 100%; }
+  // Time pickers fill their column: the time input grows, the AM/PM select keeps a fixed width.
+  .cds--time-picker { inline-size: 100%; }
+  .cds--time-picker__input { flex: 1 1 auto; min-inline-size: 0; }
   .cds--time-picker__input-field { inline-size: 100%; }
+  .cds--time-picker__select { flex: 0 0 5.5rem; inline-size: 5.5rem; }
+  .cds--time-picker__select .cds--select-input { inline-size: 100%; }
+  // Same height on every tab, so the dialog doesn't jump while switching.
+  .cds--tab-content { min-block-size: 27rem; }
+  // Mouse clicks on tabs don't leave a focus ring; keyboard focus still shows one.
+  .cds--tabs__nav-item:focus:not(:focus-visible) { outline: none; box-shadow: none; }
+}
+.erc-setup__group > legend.cds--label,
+.erc-setup__heading {
+  @include type-style("heading-compact-01");
+  color: $text-primary;
+  margin-block-end: $spacing-05;
 }
 .erc-setup__intro { @include type-style("body-01"); color: $text-secondary; margin-block-end: $spacing-05; }
 

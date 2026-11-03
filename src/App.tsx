@@ -72,7 +72,7 @@ export function App() {
           Class Clock
         </HeaderName>
         {settings.isExample && (
-          <Tag type="red" size="md" className="erc-header__example">Example details</Tag>
+          <Tag type="warm-gray" size="md" className="erc-header__example">Example details</Tag>
         )}
         <HeaderGlobalBar className="erc-header__actions">
           <HeaderGlobalAction aria-label="Setup (S)" tooltipAlignment="end" onClick={() => setSetupOpen(true)}>

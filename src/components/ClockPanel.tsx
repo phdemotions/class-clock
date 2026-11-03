@@ -1,4 +1,4 @@
-import { CheckmarkFilled, ErrorFilled, Time, WarningAltFilled, WarningFilled } from "@carbon/icons-react";
+import { CheckmarkFilled, ErrorFilled, Hourglass, Time, WarningAltFilled, WarningFilled } from "@carbon/icons-react";
 import { useLayoutEffect, useRef, type CSSProperties } from "react";
 import { useDigitWidth } from "../hooks/useDigitWidth";
 import { fontById } from "../lib/fonts";
@@ -12,7 +12,7 @@ const STATUS: Record<Phase, { text: string; Icon: typeof Time }> = {
   running: { text: "In progress", Icon: CheckmarkFilled },
   warn30: { text: "30 min left", Icon: WarningAltFilled },
   warn10: { text: "10 min left", Icon: WarningFilled },
-  warn5: { text: "5 min left", Icon: ErrorFilled },
+  warn5: { text: "5 min left", Icon: Hourglass },
   ended: { text: "Ended", Icon: ErrorFilled },
 };
 
@@ -56,7 +56,7 @@ export function ClockPanel({ settings, now }: { settings: Settings; now: Date })
       style={{ "--erc-digit-w": `${digitWidth}em` } as CSSProperties}
     >
       <header className="erc-panel__header">
-        <h2 id="clock-title" className="erc-panel__title">{phase === "before" ? "Starts in" : "Time remaining"}</h2>
+        <h2 id="clock-title" className="erc-panel__title">{phase === "before" ? "Starts in" : phase === "ended" ? "Time" : "Time left"}</h2>
         <p className="erc-clock__status">
           <Icon size={32} aria-hidden="true" />
           <span>{text}</span>
@@ -65,10 +65,8 @@ export function ClockPanel({ settings, now }: { settings: Settings; now: Date })
 
       <div className="erc-clock__body">
         <div ref={bigRef} className={`erc-clock__remaining${phase === "ended" ? " is-message" : ""}`}>
-          {phase === "ended" ? big : <Digits text={big} />}
+          {phase === "ended" ? <span>{big}</span> : <Digits text={big} />}
         </div>
-        {phase === "ended" && <p className="erc-clock__message"><strong>Stop writing.</strong> Close your booklet and stay seated.</p>}
-
         <div className="erc-clock__timeline">
           <div
             className="erc-clock__bar"
@@ -81,24 +79,27 @@ export function ClockPanel({ settings, now }: { settings: Settings; now: Date })
           >
             <span style={{ inlineSize: `${pct}%` }} />
           </div>
-          <div className="erc-clock__ends">
-            <span>{phase === "before" ? "Starts" : "Started"} {startText}</span>
-            <span className="erc-clock__end">Ends <strong>{endText}</strong></span>
-          </div>
+          {/* The closing message takes this row's place, so the panel keeps its height. */}
+          {phase === "ended" ? (
+            <p className="erc-clock__ends erc-clock__message"><span><strong>Stop writing.</strong> Close your booklet and stay seated.</span></p>
+          ) : (
+            <div className="erc-clock__ends">
+              <span>{phase === "before" ? "Starts" : "Started"} {startText}</span>
+              <span className="erc-clock__end">Ends <strong>{endText}</strong></span>
+            </div>
+          )}
         </div>
       </div>
 
       <div className="erc-clock__now">
-        <div className="erc-clock__now-head">
-          <h2 className="erc-clock__label">Current time</h2>
-          <span className="erc-clock__date">
-            {now.toLocaleDateString("en-CA", { weekday: "long", month: "long", day: "numeric" })}
-          </span>
-        </div>
+        <h2 className="cds--visually-hidden">Current time</h2>
         <time className="erc-clock__time" dateTime={now.toISOString()}>
           <Digits text={clock.time} />
           {clock.period && <span className="erc-clock__period">{clock.period}</span>}
         </time>
+        <span className="erc-clock__date">
+          {now.toLocaleDateString("en-CA", { weekday: "long", month: "long", day: "numeric" })}
+        </span>
       </div>
 
       {/* Screen readers hear phase changes only, not every second. */}

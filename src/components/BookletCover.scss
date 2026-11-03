@@ -98,7 +98,7 @@
 .erc-booklet__note {
   font-style: italic;
   color: var(--note);
-  font-size: 1.95cqw;
+  font-size: 2.05cqw;
   line-height: 1.1;
   padding-block-end: 0.55cqw;
   &.is-long { font-size: 1.6cqw; }
@@ -156,18 +156,15 @@
 }
 
 // Outside the one-screen layout the cover takes the full column width and sets its own height.
-// On phones the drawing keeps a readable minimum size and scrolls sideways inside its own box.
-.erc-booklet { block-size: auto; container-type: normal; overflow-x: auto; }
-.erc-booklet__page { inline-size: 100%; min-inline-size: 36rem; }
+// Outside the one-screen layout the cover simply takes the column width.
+.erc-booklet { block-size: auto; container-type: inline-size; }
+.erc-booklet__page { inline-size: 100%; }
+
+// One-screen layout: the cover spans the full column width (the clock panel above
+// takes whatever height is left). Only on very short screens is it capped by height,
+// and then it stays on the column's left edge.
 @include stage {
-  .erc-booklet-tile {
-    block-size: 100%;
-    min-block-size: 0;
-    box-sizing: border-box;
-    padding: clamp(0.5rem, 1.2vh, 1rem);
-    background: var(--erc-tile-bg);
-    border: 1px solid var(--erc-tile-border);
-  }
-  .erc-booklet { block-size: 100%; container-type: size; overflow: visible; justify-content: center; align-items: center; }
-  .erc-booklet__page { inline-size: min(100cqw, calc(100cqh * 100 / 71)); min-inline-size: 0; }
+  .erc-booklet { block-size: auto; }
+  // At most about half the column's height (header, margins and gutter are 9rem in total).
+  .erc-booklet__page { inline-size: 100%; max-inline-size: calc((100dvh - 9rem) * 0.52 * 100 / 71); }
 }

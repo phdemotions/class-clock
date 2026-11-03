@@ -55,6 +55,7 @@ html, body, #root { block-size: 100%; }
   --erc-tile-border: #{theme.$border-subtle-01};
   --erc-pad-x: clamp(1rem, 2vw, 2.5rem);
   --erc-pad-y: clamp(1rem, 2.6vh, 2rem);
+  --erc-panel-head: clamp(2.5rem, 4.4vh, 3rem);
 }
 body {
   background: theme.$background;
@@ -68,12 +69,16 @@ body {
 // the grid's 2rem outer edge, and the space below the header matches the gutters.
 .erc-header {
   background: theme.$layer-01;
-  // Header text starts on the same edge as the panels below.
-  &.cds--header .cds--header__name { padding-inline: calc(var(--cds-grid-margin, 1rem) + var(--cds-grid-gutter, 2rem) / 2) 0; }
+  // Header text starts on the same edge as the panels below (Carbon grid margin + half gutter).
+  &.cds--header .cds--header__name {
+    padding-inline: $spacing-05 0;
+    @include breakpoint(md) { padding-inline-start: $spacing-07; }
+    @media (min-width: 99rem) { padding-inline-start: $spacing-07 + $spacing-03; }
+  }
 }
 // Only the buttons fade when the mouse is still; the example warning stays visible.
 .erc-header__actions { transition: opacity 600ms; .erc-app.is-idle & { opacity: 0.2; } }
-.erc-header__example { align-self: center; margin-inline-start: $spacing-05; flex: none; }
+.erc-header .erc-header__example.cds--tag { align-self: center; margin-inline: $spacing-05 0; flex: none; }
 
 .erc-main {
   padding-block: calc(3rem + #{$spacing-07}) $spacing-07;
@@ -88,7 +93,7 @@ body {
   .erc-main { block-size: 100dvh; box-sizing: border-box; }
   .erc-grid { block-size: 100%; }
   .erc-col { block-size: 100%; min-block-size: 0; }
-  .erc-col--side { display: grid; grid-template-rows: auto minmax(0, 1fr); order: 0; }
+  .erc-col--side { display: grid; grid-template-rows: minmax(0, 1fr) auto; order: 0; }
 
   // Medium screens (8 columns) in landscape: 5 + 3 split. Large screens use the Column props (10 + 6).
   @include breakpoint-down(lg) {
