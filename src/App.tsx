@@ -54,6 +54,19 @@ export function App() {
     setSetupOpen(false);
   }, []);
 
+  // A setup link pasted into a tab that is already open changes only the hash, with no reload.
+  useEffect(() => {
+    const onHash = () => {
+      const fromLink = settingsFromHash(window.location.hash);
+      if (!fromLink) return;
+      saveSettings(fromLink);
+      setSettings(fromLink);
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    };
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+
   // Keyboard shortcuts: S opens setup, F toggles full screen.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
