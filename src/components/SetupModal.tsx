@@ -4,7 +4,7 @@ import {
 } from "@carbon/react";
 import { useState } from "react";
 import { FONT_OPTIONS, UOFG_FONTS } from "../lib/fonts";
-import { defaultSettings, type Settings, type ThemeChoice } from "../lib/settings";
+import { defaultSettings, setupLink, type Settings, type ThemeChoice } from "../lib/settings";
 import { addMinutes, durationMinutes, parseHM, toHM } from "../lib/time";
 import { RichTextEditor } from "./RichTextEditor";
 import { TimeField } from "./TimeField";
@@ -42,6 +42,16 @@ function SetupForm({ settings, onClose, onSave }: Props) {
   const [draft, setDraft] = useState<Settings>(() => structuredClone(settings));
   const [submitted, setSubmitted] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
+  const [linkState, setLinkState] = useState<"idle" | "copied" | "failed">("idle");
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(setupLink(draft));
+      setLinkState("copied");
+    } catch {
+      setLinkState("failed");
+    }
+  };
 
   const set = <K extends Section>(key: K, patch: Partial<Settings[K]>) =>
     setDraft((d) => ({ ...d, [key]: { ...d[key], ...patch } }));
@@ -76,7 +86,7 @@ function SetupForm({ settings, onClose, onSave }: Props) {
       className="erc-setup"
       selectorPrimaryFocus=".ProseMirror"
     >
-      <p className="erc-setup__intro">Saved in this browser only, so set up on the computer connected to the projector.</p>
+      <p className="erc-setup__intro">Saved in this browser only. Set up on the computer connected to the projector, or open a setup link there (Appearance tab).</p>
       <Tabs>
         <TabList aria-label="Setup sections">
           <Tab>Instructions</Tab>
@@ -186,6 +196,14 @@ function SetupForm({ settings, onClose, onSave }: Props) {
                   </div>
                 </Stack>
               </FormGroup>
+              <div className="erc-setup__row">
+                <Button kind="tertiary" size="md" onClick={() => void copyLink()}>Copy setup link</Button>
+                <p className="cds--form__helper-text" role="status">
+                  {linkState === "copied" ? "Copied. Open it on any computer to load this setup there."
+                    : linkState === "failed" ? "Could not copy. Allow clipboard access and try again."
+                    : "A link that loads these details, instructions and times on another computer. It holds no student information."}
+                </p>
+              </div>
               <div className="erc-setup__danger">
                 {confirmReset ? (
                   <Stack gap={4}>

@@ -7,14 +7,23 @@ import { InstructionsPanel } from "./components/InstructionsPanel";
 import { useNow } from "./hooks/useNow";
 import { useFullscreen, useIdle, usePrefersDark, useWakeLock } from "./hooks/useScreen";
 import { fontById } from "./lib/fonts";
-import { loadSettings, saveSettings, type Settings } from "./lib/settings";
+import { loadSettings, saveSettings, settingsFromHash, type Settings } from "./lib/settings";
 import { sessionPhase, sessionWindow, formatDuration } from "./lib/time";
 
 // The setup dialog (with the text editor) loads only when first opened.
 const SetupModal = lazy(() => import("./components/SetupModal").then((m) => ({ default: m.SetupModal })));
 
+/** A `#setup=...` link replaces this browser's saved setup, then drops itself from the address bar. */
+function initialSettings(): Settings {
+  const fromLink = settingsFromHash(window.location.hash);
+  if (!fromLink) return loadSettings();
+  saveSettings(fromLink);
+  window.history.replaceState(null, "", window.location.pathname + window.location.search);
+  return fromLink;
+}
+
 export function App() {
-  const [settings, setSettings] = useState<Settings>(() => loadSettings());
+  const [settings, setSettings] = useState<Settings>(initialSettings);
   const [setupOpen, setSetupOpen] = useState(false);
   const now = useNow();
   const idle = useIdle();

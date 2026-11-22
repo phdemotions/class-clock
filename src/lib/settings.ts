@@ -81,6 +81,35 @@ function migrate(raw: unknown): unknown {
   return raw;
 }
 
+const SETUP_HASH_KEY = "setup";
+
+/** Packs settings into a URL-safe string so a setup can travel in a link. */
+export function encodeSetup(settings: Settings): string {
+  const bytes = new TextEncoder().encode(JSON.stringify({ ...settings, isExample: false }));
+  let binary = "";
+  for (const b of bytes) binary += String.fromCharCode(b);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+/** The link that sets up any browser with these settings. */
+export function setupLink(settings: Settings, base: string = `${location.origin}${location.pathname}`): string {
+  return `${base}#${SETUP_HASH_KEY}=${encodeSetup(settings)}`;
+}
+
+/** Reads settings from a `#setup=...` link hash. Returns undefined when absent or invalid. */
+export function settingsFromHash(hash: string): Settings | undefined {
+  try {
+    const value = new URLSearchParams(hash.replace(/^#/, "")).get(SETUP_HASH_KEY);
+    if (!value) return undefined;
+    const binary = atob(value.replace(/-/g, "+").replace(/_/g, "/"));
+    const json = new TextDecoder().decode(Uint8Array.from(binary, (c) => c.charCodeAt(0)));
+    const parsed = settingsSchema.safeParse(migrate(JSON.parse(json)));
+    return parsed.success ? parsed.data : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export function loadSettings(storage: Pick<Storage, "getItem"> | undefined = safeStorage()): Settings {
   try {
     const raw = storage?.getItem(STORAGE_KEY);
