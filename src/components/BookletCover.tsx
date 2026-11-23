@@ -8,8 +8,9 @@ import "./BookletCover.scss";
  * in percent of page width, so the drawing scales with its container.
  *
  * Blue "pen" text: copy exactly. Orange notes: the student's own details.
+ * Grey "leave blank": a line the instructor does not need filled in.
  */
-type Ink = { kind: "copy"; text: string } | { kind: "note"; text: string };
+type Ink = { kind: "copy"; text: string } | { kind: "note"; text: string } | { kind: "blank"; text: string };
 
 interface Line {
   id: string;
@@ -24,9 +25,10 @@ interface Line {
 
 function lines(s: Settings): Line[] {
   const { session, booklet } = s;
+  const blank: Ink = { kind: "blank", text: "leave blank" };
   return [
-    { id: "row", x1: 69.2, x2: 81.4, y: 21.4, label: "Row", center: true, ink: { kind: "note", text: "your row" } },
-    { id: "seat", x1: 85, x2: 97.3, y: 21.4, label: "Seat", center: true, ink: { kind: "note", text: "your seat" } },
+    { id: "row", x1: 69.2, x2: 81.4, y: 21.4, label: "Row", center: true, ink: booklet.askRowSeat ? { kind: "note", text: "your row" } : blank },
+    { id: "seat", x1: 85, x2: 97.3, y: 21.4, label: "Seat", center: true, ink: booklet.askRowSeat ? { kind: "note", text: "your seat" } : blank },
     { id: "surname", x1: 3.6, x2: 40.8, y: 27.9, label: "Surname", center: true, ink: { kind: "note", text: "your last name" } },
     { id: "given", x1: 43.2, x2: 80.6, y: 27.9, label: "Preferred Given Name", center: true, ink: { kind: "note", text: "your first name" } },
     { id: "initials", x1: 83, x2: 97.1, y: 27.9, label: "Initials", center: true, ink: { kind: "note", text: "e.g. A.L." } },
@@ -52,7 +54,7 @@ function InkText({ ink, width }: { ink: Ink; width: number }): ReactNode {
   // Long text gets a smaller size so it stays on its line.
   const long = ink.text.length > (ink.kind === "copy" ? width * 0.55 : width * 0.75);
   return (
-    <span className={`erc-booklet__${ink.kind === "copy" ? "pen" : "note"}${long ? " is-long" : ""}`}>
+    <span className={`erc-booklet__${ink.kind === "copy" ? "pen" : ink.kind}${long ? " is-long" : ""}`}>
       {ink.kind === "note" && <span aria-hidden="true">✎ </span>}
       {ink.text || " "}
     </span>

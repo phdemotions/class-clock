@@ -109,7 +109,17 @@
   padding-block-end: calc(0.55 * var(--u));
   &.is-long { font-size: calc(1.6 * var(--u)); }
 }
+// A line students skip: quiet grey, no pencil mark, so it doesn't read as something to copy.
+.erc-booklet__blank {
+  font-style: italic;
+  color: #6f7378;
+  font-size: calc(1.75 * var(--u));
+  line-height: 1.1;
+  padding-block-end: calc(0.55 * var(--u));
+  white-space: nowrap;
+}
 .erc-booklet__line > .erc-booklet__pen,
+.erc-booklet__line > .erc-booklet__blank,
 .erc-booklet__line > .erc-booklet__note {
   position: static;
   max-inline-size: 100%;

@@ -1,6 +1,6 @@
 import {
   Button, ContentSwitcher, FormGroup, InlineNotification, Modal, RadioButton, RadioButtonGroup, Select, SelectItem,
-  Stack, Switch, Tab, TabList, TabPanel, TabPanels, Tabs, TextInput,
+  Stack, Switch, Tab, TabList, TabPanel, TabPanels, Tabs, TextInput, Toggle,
 } from "@carbon/react";
 import { useState } from "react";
 import { FONT_OPTIONS, UOFG_FONTS } from "../lib/fonts";
@@ -133,6 +133,8 @@ function SetupForm({ settings, onClose, onSave }: Props) {
                   </RadioButtonGroup>
                 </Stack>
               </FormGroup>
+              <Toggle id="erc-row-seat" labelText="Students fill in Row and Seat" labelA="No, leave blank" labelB="Yes"
+                toggled={draft.booklet.askRowSeat} onToggle={(on) => set("booklet", { askRowSeat: on })} />
             </Stack>
           </TabPanel>
 

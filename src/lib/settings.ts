@@ -29,6 +29,8 @@ export const settingsSchema = z.object({
   booklet: z.object({
     bookNumberText: z.string().max(60),
     bookNumberStyle: z.enum(["instruction", "copy"]),
+    // Added after version 1 with a default, so older saved setups and links still load.
+    askRowSeat: z.boolean().default(true),
   }),
   instructionsHtml: z.string().max(50_000),
   appearance: z.object({
@@ -70,7 +72,7 @@ export function defaultSettings(now = new Date()): Settings {
       end: toHM(end),
       use24h: false,
     },
-    booklet: { bookNumberText: "1, or 2 on an extra booklet", bookNumberStyle: "instruction" },
+    booklet: { bookNumberText: "1, or 2 on an extra booklet", bookNumberStyle: "instruction", askRowSeat: true },
     instructionsHtml: EXAMPLE_INSTRUCTIONS,
     appearance: { theme: "dark", headingFont: UOFG_FONTS.heading, bodyFont: UOFG_FONTS.body, clockFont: UOFG_FONTS.clock },
   };
