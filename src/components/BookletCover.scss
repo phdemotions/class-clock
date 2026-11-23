@@ -32,14 +32,16 @@
   font-family: var(--form-font);
 }
 
-// Vertical sizes use --u, which follows the width until the cover is shorter than
-// the printed proportions; then it follows the height and the lines stretch a little
-// sideways instead. This lets the cover always span its column.
+// Two units. --v places things vertically and follows the cover's height, so a cover
+// taller than the printed proportions spreads its lines apart. --u sizes text: the
+// smaller of the width and height units, so text never outgrows its line. At the
+// printed proportions both equal 1cqw.
 .erc-booklet__paper {
   position: absolute;
   inset: 0;
   container-type: size;
-  --u: min(1cqw, 1cqh * 100 / 71);
+  --v: calc(1cqh * 100 / 71);
+  --u: min(1cqw, var(--v));
 
   > * { position: absolute; }
 }
@@ -69,7 +71,7 @@
 .erc-booklet__title { font-weight: 700; font-size: calc(3.35 * var(--u)); }
 
 .erc-booklet__line {
-  block-size: calc(4.6 * var(--u));
+  block-size: calc(4.6 * var(--v));
   border-block-end: calc(0.14 * var(--u)) solid var(--paper-ink);
   display: flex;
   align-items: flex-end;
@@ -164,16 +166,13 @@
 .erc-booklet { block-size: auto; container-type: inline-size; }
 .erc-booklet__page { inline-size: 100%; }
 
-// One-screen layout: the cover spans the full column width (the clock panel above
-// takes whatever height is left). Only on very short screens is it capped by height,
-// and then it stays on the column's left edge.
+// One-screen layout: the cover spans the column width and takes a share of the screen
+// height, taller than the printed proportions when the column is narrow (the clock
+// panel above takes whatever height is left).
 @include stage {
   .erc-booklet { block-size: auto; }
-  // Up to the printed proportions, but no more than 45% of the screen's content height,
-  // so the countdown keeps its size on short screens.
-  .erc-booklet__page { block-size: max(55cqw, min(71cqw, (100dvh - 9rem) * 0.45)); }
-  // Taller screens have room to spare: give the cover up to half the height.
+  .erc-booklet__page { block-size: max(55cqw, (100dvh - 9rem) * 0.5); }
   @media (min-height: 62.5rem) {
-    .erc-booklet__page { block-size: max(55cqw, min(71cqw, (100dvh - 9rem) * 0.47)); }
+    .erc-booklet__page { block-size: max(55cqw, (100dvh - 9rem) * 0.58); }
   }
 }

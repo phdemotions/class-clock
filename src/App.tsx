@@ -114,10 +114,10 @@ export function App() {
 
       <main id="main-content" className="erc-main">
         <Grid fullWidth className="erc-grid">
-          <Column sm={4} md={8} lg={10} className="erc-col erc-col--instructions">
+          <Column sm={4} md={8} lg={9} className="erc-col erc-col--instructions">
             <InstructionsPanel settings={settings} />
           </Column>
-          <Column sm={4} md={8} lg={6} className="erc-col erc-col--side">
+          <Column sm={4} md={8} lg={7} className="erc-col erc-col--side">
             <ClockPanel settings={settings} now={now} />
             <BookletCover settings={settings} />
           </Column>

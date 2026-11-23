@@ -44,7 +44,7 @@ function lines(s: Settings): Line[] {
 
 const pos = (left: number, top: number, width?: number): CSSProperties => ({
   left: `${left}cqw`,
-  top: `calc(${top} * var(--u))`,
+  top: `calc(${top} * var(--v))`,
   ...(width !== undefined ? { width: `${width}cqw` } : {}),
 });
 
