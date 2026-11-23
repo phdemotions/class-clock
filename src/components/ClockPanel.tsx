@@ -1,4 +1,3 @@
-import { CheckmarkFilled, ErrorFilled, Hourglass, Time, WarningAltFilled, WarningFilled } from "@carbon/icons-react";
 import { useLayoutEffect, useRef, type CSSProperties } from "react";
 import { useDigitWidth } from "../hooks/useDigitWidth";
 import { fontById } from "../lib/fonts";
@@ -7,22 +6,21 @@ import { formatClockText, formatDuration, progress, sessionPhase, sessionWindow,
 import { Digits } from "./Digits";
 import "./ClockPanel.scss";
 
-// The heading already says whether the session has started or ended, so the
-// badge appears only for the warnings, where its colour carries to the back row.
-const STATUS: Record<Phase, { text: string; Icon: typeof Time }> = {
-  before: { text: "Not started", Icon: Time },
-  running: { text: "In progress", Icon: CheckmarkFilled },
-  warn30: { text: "30 min left", Icon: WarningAltFilled },
-  warn10: { text: "10 min left", Icon: WarningFilled },
-  warn5: { text: "5 min left", Icon: Hourglass },
-  ended: { text: "Ended", Icon: ErrorFilled },
+// Read out to screen readers when the phase changes. On screen, the countdown's
+// colour carries the warnings (yellow at 30 minutes, orange at 10, red at 5).
+const ANNOUNCE: Record<Phase, string> = {
+  before: "Not started",
+  running: "",
+  warn30: "Under 30 minutes left",
+  warn10: "Under 10 minutes left",
+  warn5: "Under 5 minutes left",
+  ended: "Time is up",
 };
 
 export function ClockPanel({ settings, now }: { settings: Settings; now: Date }) {
   const { start, end, use24h } = settings.session;
   const win = sessionWindow(start, end, now);
   const phase = sessionPhase(win, now);
-  const { text, Icon } = STATUS[phase];
   const startText = formatClockText(win.start, use24h);
   const endText = formatClockText(win.end, use24h);
   const pct = Math.round(progress(win, now) * 100);
@@ -63,12 +61,6 @@ export function ClockPanel({ settings, now }: { settings: Settings; now: Date })
     >
       <header className="erc-panel__header">
         <h2 id="clock-title" className="erc-panel__title">{phase === "before" ? "Starts in" : phase === "ended" ? "Time" : "Time left"}</h2>
-        {phase.startsWith("warn") && (
-          <p className="erc-clock__status">
-            <Icon size={32} aria-hidden="true" />
-            <span>{text}</span>
-          </p>
-        )}
       </header>
 
       <div ref={bodyRef} className="erc-clock__body">
@@ -101,7 +93,7 @@ export function ClockPanel({ settings, now }: { settings: Settings; now: Date })
 
 
       {/* Screen readers hear phase changes only, not every second. */}
-      <p className="cds--visually-hidden" aria-live="polite">{phase === "running" ? "" : phase === "ended" ? "Time is up" : text}</p>
+      <p className="cds--visually-hidden" aria-live="polite">{ANNOUNCE[phase]}</p>
     </section>
   );
 }

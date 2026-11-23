@@ -18,30 +18,6 @@
   &.is-ended { --erc-state: #{$support-error}; }
 }
 
-// Status pill: outlined while things are normal, filled once there is a warning,
-// so a change of state is visible from the back of the room.
-.erc-clock__status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4em;
-  padding: 0.3em 0.75em 0.3em 0.45em;
-  font-family: var(--erc-font-body);
-  font-weight: 700;
-  font-size: clamp(1rem, 4.4cqw, 1.75rem);
-  line-height: 1.1;
-  svg { inline-size: 1.2em; block-size: 1.2em; flex: none; }
-  border: 1px solid currentColor;
-  border-radius: 999px;
-  color: var(--erc-state);
-  white-space: nowrap;
-
-  .is-warn30 &, .is-warn10 &, .is-warn5 & {
-    background: var(--erc-state);
-    border-color: var(--erc-state);
-    color: #161616;
-  }
-}
-
 .erc-clock__body {
   display: flex;
   flex-direction: column;
@@ -124,8 +100,6 @@
   .erc-clock__bar > span { transition: none; }
 }
 
-// Light theme: dark text fails contrast on the red pill, so use white there.
-:root[data-carbon-theme="white"] .erc-clock.is-warn5 .erc-clock__status { color: #ffffff; }
 
 // Short screens (e.g. 1280x720): tighter spacing inside the panel body only. The header
 // keeps the shared spacing so its divider stays level with the instructions header.
