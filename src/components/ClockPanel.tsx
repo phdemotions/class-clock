@@ -3,10 +3,12 @@ import { useLayoutEffect, useRef, type CSSProperties } from "react";
 import { useDigitWidth } from "../hooks/useDigitWidth";
 import { fontById } from "../lib/fonts";
 import type { Settings } from "../lib/settings";
-import { formatClock, formatClockText, formatDuration, progress, sessionPhase, sessionWindow, type Phase } from "../lib/time";
+import { formatClockText, formatDuration, progress, sessionPhase, sessionWindow, type Phase } from "../lib/time";
 import { Digits } from "./Digits";
 import "./ClockPanel.scss";
 
+// The heading already says whether the session has started or ended, so the
+// badge appears only for the warnings, where its colour carries to the back row.
 const STATUS: Record<Phase, { text: string; Icon: typeof Time }> = {
   before: { text: "Not started", Icon: Time },
   running: { text: "In progress", Icon: CheckmarkFilled },
@@ -21,7 +23,6 @@ export function ClockPanel({ settings, now }: { settings: Settings; now: Date })
   const win = sessionWindow(start, end, now);
   const phase = sessionPhase(win, now);
   const { text, Icon } = STATUS[phase];
-  const clock = formatClock(now, use24h, true);
   const startText = formatClockText(win.start, use24h);
   const endText = formatClockText(win.end, use24h);
   const pct = Math.round(progress(win, now) * 100);
@@ -62,10 +63,12 @@ export function ClockPanel({ settings, now }: { settings: Settings; now: Date })
     >
       <header className="erc-panel__header">
         <h2 id="clock-title" className="erc-panel__title">{phase === "before" ? "Starts in" : phase === "ended" ? "Time" : "Time left"}</h2>
-        <p className="erc-clock__status">
-          <Icon size={32} aria-hidden="true" />
-          <span>{text}</span>
-        </p>
+        {phase.startsWith("warn") && (
+          <p className="erc-clock__status">
+            <Icon size={32} aria-hidden="true" />
+            <span>{text}</span>
+          </p>
+        )}
       </header>
 
       <div ref={bodyRef} className="erc-clock__body">
@@ -96,16 +99,6 @@ export function ClockPanel({ settings, now }: { settings: Settings; now: Date })
         </div>
       </div>
 
-      <div className="erc-clock__now">
-        <h2 className="cds--visually-hidden">Current time</h2>
-        <time className="erc-clock__time" dateTime={now.toISOString()}>
-          <Digits text={clock.time} />
-          {clock.period && <span className="erc-clock__period">{clock.period}</span>}
-        </time>
-        <span className="erc-clock__date">
-          {now.toLocaleDateString("en-CA", { weekday: "long", month: "long", day: "numeric" })}
-        </span>
-      </div>
 
       {/* Screen readers hear phase changes only, not every second. */}
       <p className="cds--visually-hidden" aria-live="polite">{phase === "running" ? "" : phase === "ended" ? "Time is up" : text}</p>

@@ -12,7 +12,7 @@ describe("App", () => {
   it("shows the clock, instructions and booklet cover", () => {
     render(<App />);
     expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
-    expect(screen.getByText("Current time")).toBeInTheDocument();
+    expect(screen.getByRole("progressbar", { name: "Time used" })).toBeInTheDocument();
     expect(screen.getByRole("figure", { name: /fill in the front of your booklet/i })).toBeInTheDocument();
     expect(screen.getByText(/Example details/)).toBeInTheDocument();
   });

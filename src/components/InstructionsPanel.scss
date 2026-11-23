@@ -7,25 +7,12 @@
 
 .erc-instructions { @include stage { block-size: 100%; } }
 
-.erc-instructions .erc-panel__header > .erc-panel__title { flex: 0 1 auto; max-inline-size: 70%; }
-.erc-instructions__course {
-  flex: 0 1 auto !important;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  @include type-style("body-02");
-  font-family: var(--erc-font-body);
-  font-size: clamp(1rem, 1.1vw, 1.375rem);
-  color: $text-secondary;
-  font-variant-numeric: tabular-nums;
-}
 
 .erc-instructions__box {
   flex: 1;
   min-block-size: 0;
   @include stage { overflow: hidden; }
-
-
+  &[data-overflow] { overflow-y: auto; }
 }
 
 .erc-instructions__empty { @include type-style("body-02"); color: $text-secondary; }

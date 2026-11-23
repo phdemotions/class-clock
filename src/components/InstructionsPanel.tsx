@@ -11,16 +11,14 @@ export function InstructionsPanel({ settings }: { settings: Settings }) {
   const empty = !hasVisibleText(html);
   // Fill the panel on large screens; on small screens let the page scroll instead.
   const large = useMediaQuery(STAGE_QUERY);
-  const { boxRef, contentRef } = useFitText<HTMLDivElement, HTMLDivElement>({ min: 16, max: 88, enabled: large && !empty }, [html, settings.appearance.bodyFont, settings.appearance.headingFont]);
+  const { boxRef, contentRef } = useFitText<HTMLDivElement, HTMLDivElement>({ min: 10, max: 88, enabled: large && !empty }, [html, settings.appearance.bodyFont, settings.appearance.headingFont]);
 
-  const course = [settings.session.courseNumber, settings.session.courseTitle].filter(Boolean).join(" · ");
   const title = settings.session.title.trim() || "Instructions";
 
   return (
     <section className="erc-panel erc-instructions" aria-labelledby="instructions-title">
       <header className="erc-panel__header">
         <h1 id="instructions-title" className="erc-panel__title">{title}</h1>
-        {course && <p className="erc-instructions__course">{course}</p>}
       </header>
       <div ref={boxRef} className="erc-instructions__box">
         {empty ? (
